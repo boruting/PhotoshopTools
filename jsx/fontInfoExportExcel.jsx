@@ -1,6 +1,15 @@
-﻿var file = File($.fileName);
+﻿/**
+ * @author kersBoru
+ * @name FontInfoExportExcel  
+ * @description 导出psd文件文本信息
+ * @weixin JackdawTing
+ * @date 2021-01-16 创建
+ */
+/*引用库*/
+var file = File($.fileName);
 var p =decodeURI(file.parent.parent);
 $.evalFile( p+ "/js/helper.js");
+
 function datenum(v, date1904) {
     if (date1904) v += 1462;
     var epoch = Date.parse(v);
@@ -78,9 +87,11 @@ function checkLayers(layers, path, data) {
 
 var doc;
 try {
-    doc = app.activeDocument
+    doc = app.activeDocument;
+    var docFile = new File(doc.fullName.path);
 } catch (e) {
     doc = null;
+    alert("没有打开psd文档 或 文档没有保存");
 }
 if (doc) {
     //会替换的文本

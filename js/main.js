@@ -4,66 +4,46 @@ window.onload=function(){
     var str = csInterface.getSystemPath(SystemPath.EXTENSION);
     
 
-    $("#main_one").click(function () {
+    $("#psdG9").click(function () {//智能对象九宫
             
-        css.evalScript('$.evalFile("' + str + "/jsx/cleanMetaData/main_one.jsx" + '")');
+        css.evalScript('$.evalFile("' + str + "/jsx/psdG9.jsx" + '")');
     });
-    $("#batchPSDmetaData").click(function () {
-            
-        css.evalScript('$.evalFile("' + str + "/jsx/cleanMetaData/batchPSDmetaData.jsx" + '")');
-    });
-    $("#CornerEditor").click(function () {
+    $("#CornerEditor").click(function () {//矢量角修改
             
         css.evalScript('$.evalFile("' + str + "/jsx/Corner Editor.jsx" + '")');
     });
-    $("#fileImportLnkd").click(function () {
+    $("#PsdToEUI").click(function () {//Psd导出EUI
+            
+        css.evalScript('$.evalFile("' + str + "/jsx/PsdToEUI/PsdToEUI.jsx" + '")');
+    });
+    $("#PsdToAssets").click(function () {//Psd切图脚本
+            
+        css.evalScript('$.evalFile("' + str + "/jsx/PsdToEUI/PsdToAssets.jsx" + '")');
+    });
+    $("#cleanMetadata_one").click(function () {//清理原始数据-单
+            
+        css.evalScript('$.evalFile("' + str + "/jsx/cleanMetaData/main_one.jsx" + '")');
+    });
+    $("#cleanMetadata_N").click(function () {//清理原始数据-N
+            
+        css.evalScript('$.evalFile("' + str + "/jsx/cleanMetaData/batchPSDmetaData.jsx" + '")');
+    });
+    $("#test").click(function () {//测试
+            
+        css.evalScript('$.evalFile("' + str + "/jsx/test.jsx" + '")');
+    });
+    $("#BlackCutout").click(function () {//抠图黑色底
+            
+        css.evalScript('$.evalFile("' + str + "/jsx/BlackCutout.jsx" + '")');
+    });
+    $("#fileImportLnkd").click(function () {//创建链接对象
             
         css.evalScript('$.evalFile("' + str + "/jsx/fileImportLnkd.jsx" + '")');
     });
-    $("#ModifyLayerInfo").click(function () {
-                   
-        css.evalScript('$.evalFile("' + str + "/jsx/ModifyLayerInfo.jsx" + '")');
-    });
-    $("#BlackCutout").click(function () {
-                   
-        css.evalScript('$.evalFile("' + str + "/jsx/BlackCutout.jsx" + '")');
-    });
-    $("#fontInfoExportExcel").click(function () {
-                   
+    $("#fontInfoExportExcel").click(function () {//文本层信息>>Excel
+            
         css.evalScript('$.evalFile("' + str + "/jsx/fontInfoExportExcel.jsx" + '")');
     });
-    $("#openArtLib").click(function () {
-                   
-        css.evalScript('$.evalFile("' + str + "/jsx/openArtLib.jsx" + '")');
-    });
-    $("#test").mouseup(function () {
-                   
-        css.evalScript('$.evalFile("' + str + "/jsx/test.jsx" + '")');
-    });
-    $("#buttonGenerate").mouseup(function () {
-                   
-        css.evalScript('$.evalFile("' + str + "/jsx/buttonGenerate/mainBtnGenerate.jsx" + '")');
-    });
-    $("#MarkUI").mouseup(function () {
-                   
-        css.evalScript('$.evalFile("' + str + "/jsx/MarkUI.jsx" + '")');
-    });
-    $("#ArtText").mouseup(function () {
-                   
-        css.evalScript('$.evalFile("' + str + "/jsx/ArtTextN.jsx" + '")');
-    });
-    $("#titleArtText").mouseup(function () {
-                   
-        css.evalScript('$.evalFile("' + str + "/jsx/Por/titleArtText.jsx" + '")');
-    });
-    $("#exportIcon").mouseup(function () {
-                   
-        css.evalScript('$.evalFile("' + str + "/jsx/exportIcon.jsx" + '")');
-    });
-    $("#psdG9").mouseup(function () {
-                   
-        css.evalScript('$.evalFile("' + str + "/jsx/psdG9.jsx" + '")');
-    });
-
+    
 
 }

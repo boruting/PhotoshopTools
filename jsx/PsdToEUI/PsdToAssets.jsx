@@ -1,7 +1,13 @@
+/**
+ * @author kersBoru
+ * @name PsdToAssets ps切图脚本 
+ * @description 把 a.psd 选中文件 移动到 新建的 a_切图.psd 文件中
+ *              利用(ps>>文件>>生成>>图像资源)切图 
+ * @weixin JackdawTing
+ * @date 2021-01-05 创建
+ */
 /*引用库*/
-var file = File($.fileName);
-var p = decodeURI(file.parent.parent);
-$.evalFile(p + "/lib/Kinase_lib.jsx");
+$.evalFile(File($.fileName).parent + "/lib/Kinase_lib.jsx");
 $.writeln("111");
 
 /**

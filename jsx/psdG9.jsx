@@ -7,15 +7,17 @@
                     暂定放大区域是圆角+2像素(右上圆角宽度-2)
  * @date 2021-01-04 修正画板影响画布大小 创建选区的问题                     
  */
-var file = File($.fileName);
-var p = decodeURI(file.parent);
-$.evalFile(p + "/lib/Kinase_lib.jsx");
-$.evalFile(p + "/lib/json2.jsx");
+/*加载脚本库*/
+$.evalFile(File($.fileName).parent + "/lib/Kinase_lib.jsx");
+$.evalFile(File($.fileName).parent + "/lib/json2.jsx");
+$.evalFile(File($.fileName).parent + "/lib/kersBoru_lib.jsx");
+
 try {
     JSON
 } catch (e) {
     $.writeln("1因为未载入 JSON 解析库，请载入 json2.jsx ");
 }
+
 var reviseSmartObject = {};
 /*修正画板*/
 var correctArtBoard = {};
@@ -29,21 +31,13 @@ var modifyLayerSize = function(newW, newH, qcs) { //缺少选区数据,Region
 
     //var boundsInfo = Kinase.layer.getLayerBounds(Kinase.REF_LayerID, layer.id); //获取图层边界信息
 
-    var w = ((newW + 2) / 2) * 100; //((新的增加的宽度+现在选区宽度)/现在选区宽度)*100
-    var h = ((newH + 2) / 2) * 100;
+
+
 
     var idTrnf = charIDToTypeID("Trnf");
     var desc = new ActionDescriptor();
 
-    var idFTcs = charIDToTypeID("FTcs");
-    var idQCSt = charIDToTypeID("QCSt");
-    //===============锚点=====================
-    //| 左上:Qcs0 | 上中:Qcs4 |上右:Qcs1 |
-    //| 左中:Qcs7 | 中心:Qcsa |右中:Qcs5 |    
-    //| 左下:Qcs3 | 下中:Qcs6 |下右:Qcs2 |
-    //========================================
-    var idQcs = charIDToTypeID(qcs);
-    desc.putEnumerated(idFTcs, idQCSt, idQcs);
+    kersBoru.listenerType.modifyQcs(desc, qcs); //修改锚点
 
     var idWdth = charIDToTypeID("Wdth");
     var idPrc = charIDToTypeID("#Prc");
@@ -52,22 +46,7 @@ var modifyLayerSize = function(newW, newH, qcs) { //缺少选区数据,Region
     var idHght = charIDToTypeID("Hght");
     var idPrc = charIDToTypeID("#Prc");
     desc.putUnitDouble(idHght, idPrc, h);
-
-    //$.writeln(h+"  "+w);
     executeAction(idTrnf, desc, DialogModes.NO);
-    /*
-      var idQcsi = charIDToTypeID("Qcsi");//这个是其他位置(根据坐标)
-      desc787.putEnumerated(idFTcs, idQCSt, idQcsi);
-
-      var idPstn = charIDToTypeID("Pstn");
-      var desc788 = new ActionDescriptor();
-      var idHrzn = charIDToTypeID("Hrzn");//X
-      var idPxl = charIDToTypeID("#Pxl");
-      desc788.putUnitDouble(idHrzn, idPxl, 100.000000);//这里是X的坐标
-      var idVrtc = charIDToTypeID("Vrtc");//Y
-      var idPxl = charIDToTypeID("#Pxl");
-      desc788.putUnitDouble(idVrtc, idPxl, 100.000000);//这里是Y的坐标
-    */
 
 }
 /**
@@ -125,7 +104,7 @@ var main = function() {
                 reviseSmartObject.reviseWidth.boundsInfo = Kinase.layer.getLayerBounds(Kinase.REF_LayerID, layer.id); //获取图层边界信息
             }
             createRegion(getRegionData("移动x", reviseSmartObject.reviseWidth.boundsInfo, g9));
-            var x = pro.w-reviseSmartObject.reviseWidth.boundsInfo.w;
+            var x = pro.w - reviseSmartObject.reviseWidth.boundsInfo.w;
             var y = 0;
             selectionMove(x, y);
 
@@ -133,17 +112,18 @@ var main = function() {
             //移动
             selectionMove(1, 0);
             selectionMove(-1, 0);
-
-
-            modifyLayerSize(x, y, "Qcs7"); //Qcs7 锚点是左中 查看锚点 字符串>>> modifyLayerSize函数中
-            //selectionMove(-1, 0);
+            //修改大小
+            var w = ((newW + 2) / 2) * 100; //((新的增加的宽度+现在选区宽度)/现在选区宽度)*100
+            var h = ((newH + 2) / 2) * 100;
+            kersBoru.listenerType.modifySmartObject(w, h, "Qcs7"); //Qcs7 锚点是左中 查看锚点 字符串>>> modifyLayerSize函数中
+            
 
         }
         reviseSmartObject.reviseHeight = function() { //修改高度函数
 
             if (result_artBoard.hasArtBoard) {
 
-                 reviseSmartObject.reviseHeight.boundsInfo = Kinase.layer.getLayerBounds(Kinase.REF_LayerID, layer.id); //获取图层边界信息           
+                reviseSmartObject.reviseHeight.boundsInfo = Kinase.layer.getLayerBounds(Kinase.REF_LayerID, layer.id); //获取图层边界信息           
 
                 reviseSmartObject.reviseHeight.boundsInfo.right = reviseSmartObject.reviseHeight.boundsInfo.right + Math.abs(correctArtBoard.boundsInfo.x); //修正右边界
                 reviseSmartObject.reviseHeight.boundsInfo.bottom = reviseSmartObject.reviseHeight.boundsInfo.bottom + Math.abs(correctArtBoard.boundsInfo.y); //修正底边界
@@ -153,10 +133,10 @@ var main = function() {
                 reviseSmartObject.reviseHeight.boundsInfo = Kinase.layer.getLayerBounds(Kinase.REF_LayerID, layer.id); //获取图层边界信息
             }
 
-           
+
             createRegion(getRegionData("移动y", reviseSmartObject.reviseHeight.boundsInfo, g9));
             var x = 0;
-            var y = pro.h-reviseSmartObject.reviseHeight.boundsInfo.h;
+            var y = pro.h - reviseSmartObject.reviseHeight.boundsInfo.h;
             selectionMove(x, y);
 
             createRegion(getRegionData("加高", reviseSmartObject.reviseHeight.boundsInfo, g9)); //创建选区

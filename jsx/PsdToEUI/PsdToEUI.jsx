@@ -12,8 +12,8 @@
 /*加载其他脚本*/
 var file = File($.fileName);
 var p = decodeURI(file.parent);
-$.evalFile(p + "/lib/Bounds.jsx");
-$.evalFile(p + "/lib/getSelectedLayerItemIndex.jsx");
+//$.evalFile(p + "/lib/Bounds.jsx");
+//$.evalFile(p + "/lib/getSelectedLayerItemIndex.jsx");
 $.evalFile(p + "/lib/Kinase_lib.jsx");
 
 
