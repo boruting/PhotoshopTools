@@ -7,7 +7,8 @@ $.writeln("111");
 // var h = ((200 + 2) / 2) * 100;
 var layer = app.activeDocument.activeLayer;
 var boundsInfo = kersBoru.layer.getLayerBounds (layer,"boundsNoMask");//"bounds"、"boundsNoMask"
-var w = (200 / boundsInfo.w) * 100;
-var h = (200 / boundsInfo.h) * 100;
+
+var w = (200 / boundsInfo.w) * 100;//修改到需要的宽
+var h = (200 / boundsInfo.h) * 100;//修改到需要的高
 
 kersBoru.listenerType.modifySmartObject(w, h, "Qcs7");
