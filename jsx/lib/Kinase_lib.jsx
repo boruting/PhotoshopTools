@@ -846,14 +846,14 @@ Kinase.layer.get_AGMStrokeStyleInfo_Objcet = function (targetReference, target)
  * @param getSimpleObject - 获取简单对象
  * @returns {{}}
  */
-Kinase.layer.get_XXX_Objcet = function (targetReference, target, xxx, getSimpleObject)
+Kinase.layer.get_XXX_Objcet = function (targetReference, target, xxx, getSimpleObject)//get_XXX_Objcet(targetReference, target, "artboardEnabled", "Lyr ");
 {
 
     try
     {
         var ref = new ActionReference();
         ref.putProperty(charIDToTypeID("Prpr"), stringIDToTypeID(xxx));
-        targetReference(ref, target, "layer");//"contentLayer"
+        targetReference(ref, target, "layer");//"contentLayer" Kinase.REF_LayerID = function (ref, layerID, classString)
         var layerDesc = executeActionGet(ref);
     }
     catch (e)
@@ -2791,9 +2791,9 @@ Kinase.layer.getLayerBounds = function (targetReference, target, getType)
     if (result_artBoard.hasArtBoard)
     {
         /*画板注释掉了下面2行不暂时不知何用*/
-        //var itemIndex_raw = Kinase.layer.get_XXX_Objcet(targetReference, target, "itemIndex", "Lyr ");
+        var itemIndex_raw = Kinase.layer.get_XXX_Objcet(targetReference, target, "itemIndex", "Lyr ");
 
-        //var rootId = Kinase.layer.findRootLayers_byItemIndex(itemIndex_raw.itemIndex.value)
+        var rootId = Kinase.layer.findRootLayers_byItemIndex(itemIndex_raw.itemIndex.value)
 
 
         var artBoard_boundsInfo_raw = Kinase.layer.get_XXX_Objcet(Kinase.REF_LayerID, result_artBoard.aArtBoardId, "boundsNoEffects", "Lyr ");

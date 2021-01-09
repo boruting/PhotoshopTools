@@ -3,14 +3,15 @@
  * @name Photoshop通用库  
  * @description 将一些常用的函数放到这里
  * @weixin JackdawTing
- * @date 2021-01-08 modifySmartObject 函数添加了 宽高约束 (功能未开启)          
+ * @date 2021-01-08 modifySmartObject 函数添加了 宽高约束 (功能未开启)  
+ * @date 2021-01-09 修改了获取边界信息的函数   getLayerBounds  直接读取.value    
  */
 var kersBoru = function() {
     return this;
 }
 
-kersBoru.listenerType = {};//监听脚本类型
-kersBoru.layer = {};//图层相关
+kersBoru.listenerType = {}; //监听脚本类型
+kersBoru.layer = {}; //图层相关
 /**
  * 导入连接对象
  * @param pat psd文件全路径 包括文件名和后缀
@@ -33,7 +34,7 @@ kersBoru.listenerType.importLnkd = function(pat) {
  * @param h 新的高
  * @param qcs 锚点坐标参数 左上:Qcs0 | 上中:Qcs4 |上右:Qcs1| 左中:Qcs7 | 中心:Qcsa |右中:Qcs5 | 左下:Qcs3 | 下中:Qcs6 |下右:Qcs2 
  */
-kersBoru.listenerType.modifySmartObject = function(w, h, qcs) {
+kersBoru.listenerType.modifyLayerSize = function(w, h, qcs) {
 
     var idTrnf = charIDToTypeID("Trnf");
     var desc = new ActionDescriptor();
@@ -67,7 +68,8 @@ kersBoru.listenerType.modifySmartObject = function(w, h, qcs) {
     executeAction(idTrnf, desc, DialogModes.NO);
 }
 /**
- * 移动 智能对象 选区内容
+ * 移动智能对象     
+ * 这个移动等同与键盘方向键 (智能对象图层的选区范围内图像是 鼠标无法单独移动的)
  * @param x 向x方向移动 多少
  * @param y 向y方向移动 多少
  */
@@ -94,7 +96,7 @@ kersBoru.listenerType.selectionMove = function(x, y) {
  * @param {*} layer 暂时是当前图层
  * @param {*} getType 获取边类型，默认为："boundsNoEffects"，还可以是："bounds"、"boundsNoMask"
  */
-kersBoru.layer.getLayerBounds = function(layer,getType) {
+kersBoru.layer.getLayerBounds = function(layer, getType) {
     var boundsInfo = {
         x: null,
         y: null,
@@ -102,15 +104,15 @@ kersBoru.layer.getLayerBounds = function(layer,getType) {
         h: null,
         right: null,
         bottom: null
-    }  
-    var classStr = _value(getType, "boundsNoEffects");//"bounds"、"boundsNoEffects"
+    }
+    var classStr = _value(getType, "boundsNoEffects"); //"bounds"、"boundsNoEffects"
     var bounds = layer[classStr];
 
-    var reg = /[0-9]*/;
-    boundsInfo.x = reg.exec(bounds[0]);
-    boundsInfo.y = reg.exec(bounds[1]);
-    boundsInfo.right = reg.exec(bounds[2]);
-    boundsInfo.bottom = reg.exec(bounds[3]);
+    //var reg = /[0-9]*/;
+    boundsInfo.x = bounds[0].value;//reg.exec(DOmBounds[0])[0]
+    boundsInfo.y =bounds[1].value;
+    boundsInfo.right = bounds[2].value;
+    boundsInfo.bottom = bounds[3].value;
     boundsInfo.w = boundsInfo.right - boundsInfo.x;
     boundsInfo.h = boundsInfo.bottom - boundsInfo.y;
 
@@ -118,13 +120,40 @@ kersBoru.layer.getLayerBounds = function(layer,getType) {
 
 }
 var _value = function(value, defaultValue) {
-        if (value != undefined) {
-            return value;
+    if (value != undefined) {
+        return value;
+    } else {
+        if (defaultValue != undefined) {
+            return defaultValue;
         } else {
-            if (defaultValue != undefined) {
-                return defaultValue;
-            } else {
-                return null;
-            }
+            return null;
         }
     }
+}
+//===========================================
+/**
+ * 判断是否是画板
+ * @param {*} id 图层id
+ */
+var isArtBoard = function (id) {
+    var ob = {};
+    var ref = new ActionReference();
+    ref.putProperty(charIDToTypeID("Prpr"), stringIDToTypeID("artboardEnabled"));
+    //targetReference(ref, target, "layer"); //"contentLayer"
+    var typeID = stringIDToTypeID("layer");
+    ref.putIdentifier(typeID, id);
+    var layerDesc = executeActionGet(ref);
+    //Kinase.layer.get_XXX_Objcet(targetReference, target, "artboardEnabled", "Lyr ");
+
+    var key = layerDesc.getKey(0);
+    var obType = layerDesc.getType(key);
+    var obValue = null;
+    obValue = layerDesc.getBoolean(key);
+    //var name = typeIDToStringID(key);
+    ob[typeIDToStringID(key)] = {
+        value: obValue,
+        type: obType.toString()
+    };
+    return ob;
+    $.writeln(ob.artboardEnabled.value);
+}
