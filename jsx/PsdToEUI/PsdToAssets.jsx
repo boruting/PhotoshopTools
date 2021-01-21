@@ -7,7 +7,7 @@
  * @date 2021-01-05 创建
  */
 /*引用库*/
-$.evalFile(File($.fileName).parent + "/lib/Kinase_lib.jsx");
+$.evalFile(File($.fileName).parent.parent + "/lib/Kinase_lib.jsx");
 $.writeln("111");
 
 /**

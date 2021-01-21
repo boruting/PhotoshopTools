@@ -10,11 +10,11 @@
  * @date 2021-01-04 切图方式>>>  将当前psd文档中的需要切图的文件全部复制到一个新的psd文档中文档名字 为 当前文档名字加"-切图"    skin-Frame1-切图               
  */
 /*加载其他脚本*/
-var file = File($.fileName);
-var p = decodeURI(file.parent);
-//$.evalFile(p + "/lib/Bounds.jsx");
-//$.evalFile(p + "/lib/getSelectedLayerItemIndex.jsx");
-$.evalFile(p + "/lib/Kinase_lib.jsx");
+// var file = File($.fileName);
+// var p = decodeURI(file.parent);
+// //$.evalFile(p + "/lib/Bounds.jsx");
+// //$.evalFile(p + "/lib/getSelectedLayerItemIndex.jsx");
+$.evalFile(File($.fileName).parent.parent + "/lib/Kinase_lib.jsx");
 
 
 //
@@ -94,7 +94,7 @@ var getLayerInfoToExml = function(layers, id, exml) {
             var w = boundsInfo.w; //获取当前图层的宽
             var h = boundsInfo.h; //获取当前图层的高
             var layerName = layer.name; //获取当前图层的名字
-            var type = layerName.split(":"); //获取当前图层的EUI类型
+            var type = layerName.split("@"); //获取当前图层的EUI类型
             var splitLayerName = type[1].split("."); //拆分图层名
 
             var getimgName = function(splitLayerName) {
@@ -113,34 +113,33 @@ var getLayerInfoToExml = function(layers, id, exml) {
             switch (type[0]) {
 
                 case "G9P": //九宫类型png格式
-
-                    return;
+                    var imgName = getimgName(splitLayerName);
+                    var imgType = "_png";
+                    emxl = '\n	<e:Image source=\"' + imgName + imgType + '\" x=\"' + x + '\" y=\"' + y + '"\ width=\"' + w + '\" height=\"' + h + '\"/>';
+                    return emxl;
                 case "G9J": //九宫类型jpg格式
                     var imgName = getimgName(splitLayerName);
                     var imgType = "_jpg";
+                    emxl = '\n	<e:Image source=\"' + imgName + imgType + '\" x=\"' + x + '\" y=\"' + y + '"\ width=\"' + w + '\" height=\"' + h + '\"/>';
+                    return emxl;
+                case "FxJ": //半图 翻转两张拼接 jpg格式  scaleX="-1" x="360" anchorOffsetX="360"
+                    var imgName = getimgName(splitLayerName);
+                    var imgType = "_jpg";
+                    exml = '\n    <e:Group x=\"' + x + '\" y=\"' + y + '\">';
+                    exml += '\n    <e:Image source=\"' + imgName + imgType + '\" x=\"' + 0 + '\" y=\"' + 0 + '\"/>';
+                    exml += '\n    <e:Image source=\"' + imgName + imgType + '\" x=\"' + w + '\" y=\"' + 0 + '\" scaleX=\"-1' + '\" anchorOffsetX=\"' + w + '\"/>';
+                    exml += '\n    </e:Group>';
+                    $.writeln(exml);
                     return;
-                case "FxJ0": //半图 翻转两张拼接 jpg格式  scaleX="-1" x="360" anchorOffsetX="360"
-                    var imgName = getimgName(splitLayerName);
-                    var imgType = "_jpg";
-
-                    return exml = '\n    <e:Image source=\"' + imgName + imgType + '\" x=\"' + x + '\" y=\"' + y + '\"/>';
-                case "FxJ1": //半图 翻转两张拼接 jpg格式  scaleX="-1" x="360" anchorOffsetX="360"
-                    var imgName = getimgName(splitLayerName);
-                    var imgType = "_jpg";
-                    var setX = w;
-                    //锚点 anchorOffsetX= 自己的宽
-                    return exml = '\n    <e:Image source=\"' + imgName + imgType + '\" x=\"' + x + '\" y=\"' + y + '\" scaleX=\"-1' + '\" anchorOffsetX=\"' + setX + '\"/>';
-                case "FxP0": //半图 翻转两张拼接 png格式
+                case "FxP": //半图 翻转两张拼接 png格式
                     var imgName = getimgName(splitLayerName);
                     var imgType = "_png";
-
-                    return exml = '\n    <e:Image source=\"' + imgName + imgType + '\" x=\"' + x + '\" y=\"' + y + '\"/>';
-                case "FxP1": //半图 翻转两张拼接 jpg格式  
-                    var imgName = getimgName(splitLayerName);
-                    var imgType = "_png";
-                    var setX = w;
-                    //锚点 anchorOffsetX= 自己的宽
-                    return exml = '\n    <e:Image source=\"' + imgName + imgType + '\" x=\"' + x + '\" y=\"' + y + '\" scaleX=\"-1' + '\" anchorOffsetX=\"' + setX + '\"/>';
+                    exml = '\n    <e:Group x=\"' + x + '\" y=\"' + y + '\">';
+                    exml += '\n    <e:Image source=\"' + imgName + imgType + '\" x=\"' + 0 + '\" y=\"' + 0 + '\"/>';
+                    exml += '\n    <e:Image source=\"' + imgName + imgType + '\" x=\"' + w + '\" y=\"' + 0 + '\" scaleX=\"-1' + '\" anchorOffsetX=\"' + w + '\"/>';
+                    exml += '\n    </e:Group>';
+                    $.writeln(exml);
+                    return exml;
                 case "ImgP": //普通图片 png格式
                     var imgName = getimgName(splitLayerName);
                     var imgType = "_png";

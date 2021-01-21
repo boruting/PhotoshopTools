@@ -1,9 +1,9 @@
 /*引用库*/
-$.evalFile(File($.fileName).parent + "/lib/kersBoru_lib.jsx");
-$.evalFile(File($.fileName).parent + "/lib/Kinase_lib.jsx");
+// $.evalFile(File($.fileName).parent + "/lib/kersBoru_lib.jsx");
+// $.evalFile(File($.fileName).parent + "/lib/Kinase_lib.jsx");
 
-/*================================*/
-$.writeln("111");
+// /*================================*/
+// $.writeln("111");
 
 // var w = ((200 + 2) / 2) * 100; //((新的增加的宽度+现在选区宽度)/现在选区宽度)*100
 // var h = ((200 + 2) / 2) * 100;
@@ -27,25 +27,9 @@ $.writeln("111");
 
 //var artBoard_boundsInfo = kersBoru.layer.getLayerBounds(activeDocument.layers["画板 3"], "boundsNoEffects");
 
-var layers = activeDocument.layers;
-// var aaaaa = activeDocument.activeLayer;
-// if (activeDocument.activeLayer != undefined) {
-//     $.writeln("1234567");
+var   layer =app.activeDocument.activeLayer;
 
-// }
-
-var artBoard = getActiveLayerOutermost(activeDocument.activeLayer); //当前选中图层的最外层
-var aaaa = isArtBoard(artBoard.id).artboardEnabled.value;
-//var aaaa = Kinase.document.hasArtBoard(true, 3);
-if (aaaa) {
-
-    var artBoard_boundsInfo = kersBoru.layer.getLayerBounds(artBoard, "boundsNoEffects");
-    //$.writeln(artBoard_boundsInfo.x);
-    $.writeln("22222");
-}
-
-
-
+$.writeln("111");
 
 
 
