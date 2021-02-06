@@ -11,6 +11,9 @@
  * @date 2021-01-08 调整函数结构
                     画板修正函数取消  之前用的是Kinase_lib里的getLayerBounds 会对有画板的文件bounds 修改 (多画板会有问题)
                     现在直接掉用未修正带有画板的文档 创建选区无问题
+ * @date 2021-02-04 修改 prompt 输入方式  简化了输入方式
+                    发现 bug (链接图层会影响范围 变形区域) 
+ * @date 2021-02-06 添加取消选区 和 带有链接图层操作         
  */
 /*加载脚本库*/
 $.evalFile(File($.fileName).parent + "/lib/Kinase_lib.jsx");
@@ -26,7 +29,7 @@ try {
 var reviseSmartObject = {};
 
 /*修正画板*/
-var getBoundsInfo = function(layer) {
+var getBoundsInfo = function (layer) {
 
 
 
@@ -57,84 +60,111 @@ var getBoundsInfo = function(layer) {
     return boundsInfo;
 }
 
-var main = function() {
-    var pro = prompt("圆角图形不拉伸情况下放大智能对象", '{"w":200,"h":200}', "修改智能对象大小"); //输入一个新的 尺寸 (200,200)
-    if (pro == null) {
+var main = function () {
+    //var pro = prompt("圆角图形不拉伸情况下放大智能对象", '{"w":200,"h":200}', "修改智能对象大小"); //输入一个新的 尺寸 (200,200)
+    var pro_ = prompt("圆角图形不拉伸情况下放大智能对象\n 前是宽 后是高 \n 宽:200,高:200", '200,200', "修改智能对象大小"); //输入一个新的 尺寸 (200,200)
+    if (pro_ == null) {
         alert("已取消本次操作");
         return;
     }
-    pro = JSON.parse(pro); //转换成对象
+    //pro = JSON.parse(pro); //转换成对象
+    var pro = {};
+    pro.w = pro_.split(",")[0];
+    pro.h = pro_.split(",")[1];
+    $.writeln(pro);
     var doc = app.activeDocument;
     var layer = doc.activeLayer;
 
 
     if (layer.kind == "LayerKind.SMARTOBJECT") { //判断是否 是智能对象
         var g9 = getSmartObject();
+        var linkArr = layer.linkedLayers;//连接图层数组
+
+        var edit = function (){//编辑9宫
+            /**
+              * 修改智能对象选区内图像尺寸
+              */
+             var modifySmartObject_RegionSize = function (x, y, qcs) {
+
+                //移动 智能对象需要位移一次才会将变形工具范围 从整个图层范围 变成 当前选区内的图层范围
+                kersBoru.listenerType.selectionMove(1, 0);
+                kersBoru.listenerType.selectionMove(-1, 0); //还原坐标位置
+                //修改大小
+                var w = ((x + 2) / 2) * 100; //((新的增加的宽度+现在选区宽度)/现在选区宽度)*100
+                var h = ((y + 2) / 2) * 100;
+                kersBoru.listenerType.modifyLayerSize(w, h, qcs); //查看锚点 字符串>>> modifyLayerSize函数中
+            }
+
+            var reviseWidth = function () { //修改宽度函数
+
+                //var boundsInfo = getBoundsInfo(layer);
+                var boundsInfo = kersBoru.layer.getLayerBounds(layer, "boundsNoEffects");
+                getTypeCreateRegion("移动x", boundsInfo, g9); //创建选区
+                var x = pro.w - boundsInfo.w;
+                var y = 0;
+                kersBoru.listenerType.selectionMove(x, y); //移动选区内的图像
+
+                getTypeCreateRegion("加宽", boundsInfo, g9); //创建选区
+
+                modifySmartObject_RegionSize(x, y, "Qcs7"); //修改尺寸 Qcs7 锚点是左中 
+                doc.selection.deselect();//取消当前文档的选区
+               
+            }
+            var reviseHeight = function () { //修改高度函数
+
+                //var boundsInfo = getBoundsInfo(layer);
+                var boundsInfo = kersBoru.layer.getLayerBounds(layer, "boundsNoEffects");
+                getTypeCreateRegion("移动y", boundsInfo, g9);
+
+                var x = 0;
+                var y = pro.h - boundsInfo.h;
+                kersBoru.listenerType.selectionMove(x, y);
+
+                getTypeCreateRegion("加高", boundsInfo, g9); //创建选区
+
+                modifySmartObject_RegionSize(x, y, "Qcs4"); //修改尺寸 Qcs4 锚点是上中
+                doc.selection.deselect();//取消当前文档的选区
+               
+            }
+
+            if (pro.w > 0 && pro.h == 0) { //只修改宽
+
+                reviseWidth();
+
+            } else if (pro.h > 0 && pro.w == 0) { //修改高度
+                reviseHeight();
+            } else if (pro.h > 0 && pro.w > 0) { //先修改高度 在修改宽度x
+
+                reviseWidth();
+                $.writeln("修改宽度后");
+
+                reviseHeight();
+                $.writeln("修改高度后");
 
 
-
-
-        /**
-         * 修改智能对象选区内图像尺寸
-         */
-        var modifySmartObject_RegionSize = function(x, y, qcs) {
-
-            //移动 智能对象需要位移一次才会将变形工具范围 从整个图层范围 变成 当前选区内的图层范围
-            kersBoru.listenerType.selectionMove(1, 0);
-            kersBoru.listenerType.selectionMove(-1, 0); //还原坐标位置
-            //修改大小
-            var w = ((x + 2) / 2) * 100; //((新的增加的宽度+现在选区宽度)/现在选区宽度)*100
-            var h = ((y + 2) / 2) * 100;
-            kersBoru.listenerType.modifyLayerSize(w, h, qcs); //查看锚点 字符串>>> modifyLayerSize函数中
+            } else {
+                return alert("失败");
+            }
         }
 
-        var reviseWidth = function() { //修改宽度函数
+        if (linkArr.length == 0) {//判断是否有链接图层
 
-            //var boundsInfo = getBoundsInfo(layer);
-            var boundsInfo = kersBoru.layer.getLayerBounds(layer, "boundsNoEffects");
-            getTypeCreateRegion("移动x", boundsInfo, g9); //创建选区
-            var x = pro.w - boundsInfo.w;
-            var y = 0;
-            kersBoru.listenerType.selectionMove(x, y); //移动选区内的图像
+            edit();
+            
+         
+        }else{
 
-            getTypeCreateRegion("加宽", boundsInfo, g9); //创建选区
+            layer.unlink();
+            edit();
+            for(var i = 0;i<linkArr.length;i++){
+               
+               layer.link(linkArr[i]);
 
-            modifySmartObject_RegionSize(x, y, "Qcs7"); //修改尺寸 Qcs7 锚点是左中 
-        }
-        var reviseHeight = function() { //修改高度函数
-
-            //var boundsInfo = getBoundsInfo(layer);
-            var boundsInfo = kersBoru.layer.getLayerBounds(layer, "boundsNoEffects");
-            getTypeCreateRegion("移动y", boundsInfo, g9);
-
-            var x = 0;
-            var y = pro.h - boundsInfo.h;
-            kersBoru.listenerType.selectionMove(x, y);
-
-            getTypeCreateRegion("加高", boundsInfo, g9); //创建选区
-
-            modifySmartObject_RegionSize(x, y, "Qcs4"); //修改尺寸 Qcs4 锚点是上中
+            }
+            
         }
 
-        if (pro.w > 0 && pro.h == 0) { //只修改宽
 
-            reviseWidth();
-
-        } else if (pro.h > 0 && pro.w == 0) { //修改高度
-            reviseHeight();
-        } else if (pro.h > 0 && pro.w > 0) { //先修改高度 在修改宽度x
-
-            reviseWidth();
-            $.writeln("修改宽度后");
-
-            reviseHeight();
-            $.writeln("修改高度后");
-
-
-        } else {
-            return alert("失败");
-        }
-        //selectionMove(x, y);
 
     } else {
         return alert("选中的图层 不是智能对象");
@@ -152,7 +182,7 @@ var main = function() {
 main();
 
 /*测试函数*/
-var test = function() {
+var test = function () {
     var doc = app.activeDocument;
     var lay = doc.activeLayer;
     // var boundsInfo = Kinase.layer.getLayerBounds(Kinase.REF_LayerID, layer.id); //获取图层边界信息
