@@ -5,6 +5,7 @@
  * @weixin JackdawTing
  * @date 2021-01-08 modifySmartObject 函数添加了 宽高约束 (功能未开启)  
  * @date 2021-01-09 修改了获取边界信息的函数   getLayerBounds  直接读取.value    
+ * @date 2021-05-07 添加替换链接对象 函数
  */
 var kersBoru = function() {
     return this;
@@ -27,6 +28,17 @@ kersBoru.listenerType.importLnkd = function(pat) {
     desc634.putBoolean(idLnkd, true);
     executeAction(idPlc, desc634, DialogModes.NO);
 
+}
+/**
+ * 替换连接对象
+ * @param pat psd文件全路径 包括文件名和后缀
+ */
+kersBoru.listenerType.placedLayerReplaceContents= function(pat){
+    var idplacedLayerReplaceContents = stringIDToTypeID( "placedLayerReplaceContents" );
+    var desc = new ActionDescriptor();
+    var idnull = charIDToTypeID( "null" );
+    desc.putPath( idnull, new File( pat ) );
+    executeAction( idplacedLayerReplaceContents, desc, DialogModes.NO );
 }
 /**
  * 修改图层大小
