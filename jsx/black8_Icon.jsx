@@ -23,7 +23,7 @@ var doc = app.activeDocument;
 
 //var excelFile = new File("E:/test/武将.json");
 var pat = "D:/sg2/ui/upload_new/T图标/";
-var excelFile = new File(pat + "武将1.json");
+var excelFile = new File(pat + "武将.json");
 //var pat = "E:/test/T图标/";
 
 
@@ -179,7 +179,7 @@ function saveImg(pat, type, imgName) {
     var saveOption = new ExportOptionsSaveForWeb();
     saveOption.format = SaveDocumentType.PNG;
     saveOption.PNG8 = false;
-    var path = pat + "正式名称1/" + type;
+    var path = pat + "正式名称/" + type;
     var folder = new Folder(path);
     if (!folder.exists) {
         // alert("这里是folder.exists ");					//创建文件夹
