@@ -6,8 +6,9 @@
  * @date 2021-01-08 modifySmartObject 函数添加了 宽高约束 (功能未开启)  
  * @date 2021-01-09 修改了获取边界信息的函数   getLayerBounds  直接读取.value    
  * @date 2021-05-07 添加替换链接对象 函数
+ * @date 2021-05-08 添加 画布大小选区函数 和 分布对齐方式函数
  */
-var kersBoru = function() {
+var kersBoru = function () {
     return this;
 }
 
@@ -17,7 +18,7 @@ kersBoru.layer = {}; //图层相关
  * 导入连接对象
  * @param pat psd文件全路径 包括文件名和后缀
  */
-kersBoru.listenerType.importLnkd = function(pat) {
+kersBoru.listenerType.importLnkd = function (pat) {
 
     var idPlc = charIDToTypeID("Plc ");
     var desc634 = new ActionDescriptor();
@@ -33,12 +34,12 @@ kersBoru.listenerType.importLnkd = function(pat) {
  * 替换连接对象
  * @param pat psd文件全路径 包括文件名和后缀
  */
-kersBoru.listenerType.placedLayerReplaceContents= function(pat){
-    var idplacedLayerReplaceContents = stringIDToTypeID( "placedLayerReplaceContents" );
+kersBoru.listenerType.placedLayerReplaceContents = function (pat) {
+    var idplacedLayerReplaceContents = stringIDToTypeID("placedLayerReplaceContents");
     var desc = new ActionDescriptor();
-    var idnull = charIDToTypeID( "null" );
-    desc.putPath( idnull, new File( pat ) );
-    executeAction( idplacedLayerReplaceContents, desc, DialogModes.NO );
+    var idnull = charIDToTypeID("null");
+    desc.putPath(idnull, new File(pat));
+    executeAction(idplacedLayerReplaceContents, desc, DialogModes.NO);
 }
 /**
  * 修改图层大小
@@ -46,7 +47,7 @@ kersBoru.listenerType.placedLayerReplaceContents= function(pat){
  * @param h 新的高
  * @param qcs 锚点坐标参数 左上:Qcs0 | 上中:Qcs4 |上右:Qcs1| 左中:Qcs7 | 中心:Qcsa |右中:Qcs5 | 左下:Qcs3 | 下中:Qcs6 |下右:Qcs2 
  */
-kersBoru.listenerType.modifyLayerSize = function(w, h, qcs) {
+kersBoru.listenerType.modifyLayerSize = function (w, h, qcs) {
 
     var idTrnf = charIDToTypeID("Trnf");
     var desc = new ActionDescriptor();
@@ -85,7 +86,7 @@ kersBoru.listenerType.modifyLayerSize = function(w, h, qcs) {
  * @param x 向x方向移动 多少
  * @param y 向y方向移动 多少
  */
-kersBoru.listenerType.selectionMove = function(x, y) {
+kersBoru.listenerType.selectionMove = function (x, y) {
     var ref = new ActionReference();
     var desc = new ActionDescriptor();
     var desc_ = new ActionDescriptor();
@@ -104,11 +105,62 @@ kersBoru.listenerType.selectionMove = function(x, y) {
 
 }
 /**
+ * 分布对齐方式
+ * @param {*} adType 对齐方式 
+ *                   [“AdLf”:左对齐],[“AdCH”:水平居中对齐],[“AdRg”:右对齐],[“AdTp”:顶对齐],[“AdBt”:底对齐]       
+ */
+kersBoru.listenerType.alignDistribute = function (adType) {
+    var idAlgn = charIDToTypeID("Algn");
+    var desc = new ActionDescriptor();
+    var idnull = charIDToTypeID("null");
+    var ref = new ActionReference();
+    var idLyr = charIDToTypeID("Lyr ");
+    var idOrdn = charIDToTypeID("Ordn");
+    var idTrgt = charIDToTypeID("Trgt");
+    ref.putEnumerated(idLyr, idOrdn, idTrgt);
+    desc.putReference(idnull, ref);
+    var idUsng = charIDToTypeID("Usng");//使用(using)
+    var idADSt = charIDToTypeID("ADSt");//对齐分布选择器(alignDistributeSelector)
+
+    //[“AdCV”:ADSCentersV]会居中   [“AdHr”:ADSHorizontal] 会顶对齐    [“AdVr”:ADSVertical] 会顶对齐
+    //[“AdLf”:ADSLefts]    左对齐
+    //[“AdCH”:ADSCentersH]    水平居中对齐
+    //[“AdRg”:ADSRights]  右对齐
+    //[“AdTp”:ADSTops]    顶对齐
+    //[“AdBt”:ADSBottoms]    底对齐
+    //var idAdType= charIDToTypeID("AdCV");//对齐方式
+    //var idAdSV = charIDToTypeID( "AdSV" );//垂直分布
+    //var idAdSH = charIDToTypeID( "AdSH" );//水平分布
+
+    desc.putEnumerated(idUsng, idADSt, charIDToTypeID(adType));
+    //var idalignToCanvas = stringIDToTypeID("alignToCanvas");
+    //desc.putBoolean( idalignToCanvas, true );
+    executeAction(idAlgn, desc, DialogModes.NO);
+}
+/**
+ * 创建画布选区
+ */
+kersBoru.listenerType.canvasConstituency = function () {
+    var idsetd = charIDToTypeID("setd");
+    var desc = new ActionDescriptor();
+    var idnull = charIDToTypeID("null");
+    var ref = new ActionReference();
+    var idChnl = charIDToTypeID("Chnl");
+    var idfsel = charIDToTypeID("fsel");
+    ref.putProperty(idChnl, idfsel);
+    desc.putReference(idnull, ref);
+    var idT = charIDToTypeID("T   ");
+    var idOrdn = charIDToTypeID("Ordn");
+    var idAl = charIDToTypeID("Al  ");
+    desc.putEnumerated(idT, idOrdn, idAl);
+    executeAction(idsetd, desc, DialogModes.NO);
+}
+/**
  * 
  * @param {*} layer 暂时是当前图层
  * @param {*} getType 获取边类型，默认为："boundsNoEffects"，还可以是："bounds"、"boundsNoMask"
  */
-kersBoru.layer.getLayerBounds = function(layer, getType) {
+kersBoru.layer.getLayerBounds = function (layer, getType) {
     var boundsInfo = {
         x: null,
         y: null,
@@ -122,7 +174,7 @@ kersBoru.layer.getLayerBounds = function(layer, getType) {
 
     //var reg = /[0-9]*/;
     boundsInfo.x = bounds[0].value;//reg.exec(DOmBounds[0])[0]
-    boundsInfo.y =bounds[1].value;
+    boundsInfo.y = bounds[1].value;
     boundsInfo.right = bounds[2].value;
     boundsInfo.bottom = bounds[3].value;
     boundsInfo.w = boundsInfo.right - boundsInfo.x;
@@ -131,7 +183,7 @@ kersBoru.layer.getLayerBounds = function(layer, getType) {
     return boundsInfo;
 
 }
-var _value = function(value, defaultValue) {
+var _value = function (value, defaultValue) {
     if (value != undefined) {
         return value;
     } else {
