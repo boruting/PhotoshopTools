@@ -21,9 +21,11 @@ var doc = app.activeDocument;
 //var excelFile = new File("//版本公用计算机/美术资源共享文件夹1/天天幻灵美术/天天怼三国最终/T图标/图标拼合.xlsx");
 //var excelFile = new File("E:/test/test.xlsx");
 
-var excelFile = new File("E:/test/图标拼合.json");
+//var excelFile = new File("E:/test/武将.json");
+var pat = "D:/sg2/ui/upload_new/T图标/";
+var excelFile = new File(pat + "武将1.json");
+//var pat = "E:/test/T图标/";
 
-var pat = "E:/test/T图标/";
 
 //E:/test/T图标/武将/关羽.png
 
@@ -40,11 +42,11 @@ var main = function () {
 
         if (lines) {
 
-            for (var i = 1; i < lines.length; i++) { //从第二行开始读
+            for (var i = 0; i < lines.length; i++) { //从第二行开始读
                 var line = lines[i];
 
                 var type = line.type;//道具类型
-                var tag = line.tag;//左上角标
+                var tag = line.tagL;//左上角标
                 var lv = line.lv;//星级
                 var img = line.img;//图标资源
                 var qua = line.qua;//品质框
@@ -117,7 +119,7 @@ function modifyPSDcontent(tag, lv, imgFullName, qua) {
     for (var i = 0; i < layers.length; i++) {//遍历图层
 
         var layer = layers[i];
-        
+
         switch (layer.name) {//根据类型修改
 
             case "图标资源": //替换 图标资源
@@ -141,6 +143,12 @@ function modifyPSDcontent(tag, lv, imgFullName, qua) {
                     layer.visible = true;
                     activeDocument.activeLayer = layer;
                     kersBoru.listenerType.placedLayerReplaceContents(lvFullName);
+
+                    //对齐需要 选区 做 对齐参考
+                    //kersBoru.listenerType.canvasConstituency("Al  ");//创建选区 
+                    //kersBoru.listenerType.alignDistribute("AdCH");//居中对齐
+                    //kersBoru.listenerType.canvasConstituency("None");//取消选区
+
                 } else {
                     layer.visible = false;
                 }
@@ -171,7 +179,7 @@ function saveImg(pat, type, imgName) {
     var saveOption = new ExportOptionsSaveForWeb();
     saveOption.format = SaveDocumentType.PNG;
     saveOption.PNG8 = false;
-    var path = pat + "重命名/" + type;
+    var path = pat + "正式名称1/" + type;
     var folder = new Folder(path);
     if (!folder.exists) {
         // alert("这里是folder.exists ");					//创建文件夹

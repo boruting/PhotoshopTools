@@ -139,8 +139,10 @@ kersBoru.listenerType.alignDistribute = function (adType) {
 }
 /**
  * 创建画布选区
+ * @param {*} type 选区 ["Al  ":创建] 还是 ["None":取消]
  */
-kersBoru.listenerType.canvasConstituency = function () {
+kersBoru.listenerType.canvasConstituency = function (type) {
+
     var idsetd = charIDToTypeID("setd");
     var desc = new ActionDescriptor();
     var idnull = charIDToTypeID("null");
@@ -151,8 +153,8 @@ kersBoru.listenerType.canvasConstituency = function () {
     desc.putReference(idnull, ref);
     var idT = charIDToTypeID("T   ");
     var idOrdn = charIDToTypeID("Ordn");
-    var idAl = charIDToTypeID("Al  ");
-    desc.putEnumerated(idT, idOrdn, idAl);
+    //var idAl = charIDToTypeID("Al  ");
+    desc.putEnumerated(idT, idOrdn, charIDToTypeID(type));
     executeAction(idsetd, desc, DialogModes.NO);
 }
 /**
