@@ -4,6 +4,7 @@
  * @description 图标和一些角标品质框等拼合导出成一张图
  * @weixin JackdawTing
  * @date 2021-05-07 创建 
+ * @date 2021-05-09 完善类型(右上角标)
  */
 /*引用库*/
 $.evalFile(File($.fileName).parent + "/lib/kersBoru_lib.jsx");
@@ -22,8 +23,8 @@ var doc = app.activeDocument;
 //var excelFile = new File("E:/test/test.xlsx");
 
 //var excelFile = new File("E:/test/武将.json");
-var pat = "D:/sg2/ui/upload_new/T图标/";
-var excelFile = new File(pat + "武将.json");
+var pat = "D:/sg2/ui/upload_new/T图标/";//后续需要改成配置的
+var excelFile = new File(pat + "装备.json");//后续需要改成配置的
 //var pat = "E:/test/T图标/";
 
 
@@ -41,16 +42,18 @@ var main = function () {
         var lines = JSON.parse(content);
 
         if (lines) {
-
+            var logArr = [];//未成功日志
             for (var i = 0; i < lines.length; i++) { //从第二行开始读
                 var line = lines[i];
 
                 var type = line.type;//道具类型
                 var tag = line.tagL;//左上角标
+                var tagR = line.tagR;//右上角标
                 var lv = line.lv;//星级
                 var img = line.img;//图标资源
                 var qua = line.qua;//品质框
                 var imgName = line.imgName;//图片名字
+                var isExport = line.isExport;//是否需要导出
                 var quality = function (qua) {//修改品质名
                     switch (qua) {
                         case "绿": //替换 图标资源
@@ -77,22 +80,28 @@ var main = function () {
                     }
                 }
                 //quality(qua);
-                var imgFullName = pat + type + "/" + img + ".png"
+                var imgFullName = pat + img + ".png"
                 var imgBoolean = new File(imgFullName);
                 //decodeURI(a);
-                if (imgBoolean.exists) {
+                if (isExport != 1) {
+                    if (imgBoolean.exists) {
 
-                    $.writeln("111");
-                    //smartObjectOptions().putPath(charIDToTypeID("null"), imgFullName);
+                        //$.writeln("111");
+                        //smartObjectOptions().putPath(charIDToTypeID("null"), imgFullName);
 
-                    //修改psd文件
-                    modifyPSDcontent(tag, lv, imgFullName, quality(qua));
-                    //保存图片
-                    saveImg(pat, type, imgName);
-                    $.writeln("啊啊啊啊啊啊");
+                        //修改psd文件
+                        modifyPSDcontent(tag, tagR, lv, imgFullName, quality(qua));
+                        //保存图片
+                        saveImg(pat, type, imgName);
+                        //$.writeln("啊啊啊啊啊啊");
+                    } else {
+                        logArr.push(line.name);
+                    }
                 }
 
+
             }
+            $.writeln("未成功数量:" + logArr.length+" 名字: "+logArr);
         }
     }
 }
@@ -103,16 +112,17 @@ var main = function () {
  * @param imgFullName 图标资源路径
  * @param qua 品质框
  */
-function modifyPSDcontent(tag, lv, imgFullName, qua) {
+function modifyPSDcontent(tag, tagR, lv, imgFullName, qua) {
 
     //修改链接图层的地址
     //1.替换 图标资源 if(如果没找到对应资源直接条到下一个循环 continue )
     //2.替换 星级 if(lv !=0){执行替换}
 
     var layers = doc.layers;
-    var pat = "//版本公用计算机/美术资源共享文件夹1/天天幻灵美术/天天怼三国最终/lib/原始文件/";
+    var pat = "//版本公用计算机/美术资源共享文件夹1/天天幻灵美术/天天怼三国最终/lib/原始文件/";//后续需要改成配置的
 
     var tagFullName = pat + "阵营/小_" + tag + ".psd";
+    var tagR_FullName = pat + "图标相关/" + tagR + ".psd";
     var lvFullName = pat + "星星/" + lv + ".psd";
     var quaFullName = pat + "道具品质底/" + qua + ".psd";
 
@@ -132,6 +142,17 @@ function modifyPSDcontent(tag, lv, imgFullName, qua) {
                     layer.visible = true;
                     activeDocument.activeLayer = layer;
                     kersBoru.listenerType.placedLayerReplaceContents(tagFullName);
+                } else {
+                    layer.visible = false;
+                }
+
+                break;
+            case "右上角标": //替换 左上角标
+
+                if (tagR != "无") {
+                    layer.visible = true;
+                    activeDocument.activeLayer = layer;
+                    kersBoru.listenerType.placedLayerReplaceContents(tagR_FullName);
                 } else {
                     layer.visible = false;
                 }
@@ -179,7 +200,7 @@ function saveImg(pat, type, imgName) {
     var saveOption = new ExportOptionsSaveForWeb();
     saveOption.format = SaveDocumentType.PNG;
     saveOption.PNG8 = false;
-    var path = pat + "正式名称/" + type;
+    var path = pat + "正式名称1/" + type;
     var folder = new Folder(path);
     if (!folder.exists) {
         // alert("这里是folder.exists ");					//创建文件夹
