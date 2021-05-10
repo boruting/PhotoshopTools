@@ -24,7 +24,7 @@ var doc = app.activeDocument;
 
 //var excelFile = new File("E:/test/武将.json");
 var pat = "D:/sg2/ui/upload_new/T图标/";//后续需要改成配置的
-var excelFile = new File(pat + "装备.json");//后续需要改成配置的
+var excelFile = new File(pat + "配置表/货币_无品质框.json");//后续需要改成配置的
 //var pat = "E:/test/T图标/";
 
 
@@ -93,7 +93,7 @@ var main = function () {
                         modifyPSDcontent(tag, tagR, lv, imgFullName, quality(qua));
                         //保存图片
                         saveImg(pat, type, imgName);
-                        //$.writeln("啊啊啊啊啊啊");
+                        $.writeln("保存: " + line.name);
                     } else {
                         logArr.push(line.name);
                     }
@@ -101,7 +101,7 @@ var main = function () {
 
 
             }
-            $.writeln("未成功数量:" + logArr.length+" 名字: "+logArr);
+            $.writeln("未成功数量:" + logArr.length + " 名字: " + logArr);
         }
     }
 }
@@ -129,6 +129,11 @@ function modifyPSDcontent(tag, tagR, lv, imgFullName, qua) {
     for (var i = 0; i < layers.length; i++) {//遍历图层
 
         var layer = layers[i];
+        // if(layer.name=="图标资源"||layer.name=="左上角标"||layer.name=="右上角标"||layer.name=="星级"||layer.name=="品质"){
+
+        // }else{
+        //     alert("检查图层名");
+        // }
 
         switch (layer.name) {//根据类型修改
 
@@ -177,10 +182,13 @@ function modifyPSDcontent(tag, tagR, lv, imgFullName, qua) {
 
                 break;
             case "品质": //替换 品质框
+                if (qua != "无") {
+                    activeDocument.activeLayer = layer;
+                    kersBoru.listenerType.placedLayerReplaceContents(quaFullName);
+                    break;
+                }
+            default: { }
 
-                activeDocument.activeLayer = layer;
-                kersBoru.listenerType.placedLayerReplaceContents(quaFullName);
-                break;
 
         }
         //activeDocument.activeLayer = layer;
