@@ -7,6 +7,7 @@
  * @date 2021-01-09 修改了获取边界信息的函数   getLayerBounds  直接读取.value    
  * @date 2021-05-07 添加替换链接对象 函数
  * @date 2021-05-08 添加 画布大小选区函数 和 分布对齐方式函数
+ * @date 2021-05-11 添加 还原历史记录到打开时
  */
 var kersBoru = function () {
     return this;
@@ -14,6 +15,20 @@ var kersBoru = function () {
 
 kersBoru.listenerType = {}; //监听脚本类型
 kersBoru.layer = {}; //图层相关
+/**
+* 还原历史记录到打开时
+*/
+kersBoru.listenerType.returnRecords = function() {
+    var idslct = charIDToTypeID("slct");
+    var desc326 = new ActionDescriptor();
+    var idnull = charIDToTypeID("null");
+    var ref97 = new ActionReference();
+    var idSnpS = charIDToTypeID("SnpS");
+    var docName = app.activeDocument.name;//获取当前文档名字
+    ref97.putName(idSnpS, docName);
+    desc326.putReference(idnull, ref97);
+    executeAction(idslct, desc326, DialogModes.NO);
+}
 /**
  * 导入连接对象
  * @param pat psd文件全路径 包括文件名和后缀
