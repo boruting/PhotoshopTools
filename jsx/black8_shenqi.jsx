@@ -25,7 +25,7 @@ var doc = app.activeDocument;
 
 //var excelFile = new File("E:/test/武将.json");
 var pat = "D:/sg2/ui/upload_new/T图标/";//后续需要改成配置的
-var excelFile = new File(pat + "配置表/道具_无品质框.json");//后续需要改成配置的
+var excelFile = new File(pat + "配置表/神器卡.json");//后续需要改成配置的
 //var pat = "E:/test/T图标/";
 
 
@@ -55,43 +55,43 @@ var main = function () {
                 var qua = line.qua;//品质框
                 var imgName = line.imgName;//图片名字
                 var isExport = line.isExport;//是否需要导出
-                var quality = function (qua) {//修改品质名
-                    switch (qua) {
-                        case "绿": //替换 图标资源
+                // var quality = function (qua) {//修改品质名
+                //     switch (qua) {
+                //         case "绿": //替换 图标资源
 
-                            return qua = 1 + qua;
-                        case "蓝": //替换 图标资源
+                //             return qua = 1 + qua;
+                //         case "蓝": //替换 图标资源
 
-                            return qua = 2 + qua;
-                        case "紫": //替换 图标资源
+                //             return qua = 2 + qua;
+                //         case "紫": //替换 图标资源
 
-                            return qua = 3 + qua;
-                        case "橙": //替换 图标资源
+                //             return qua = 3 + qua;
+                //         case "橙": //替换 图标资源
 
-                            return qua = 4 + qua;
-                        case "红": //替换 图标资源
+                //             return qua = 4 + qua;
+                //         case "红": //替换 图标资源
 
-                            return qua = 5 + qua;
-                        case "金": //替换 图标资源
+                //             return qua = 5 + qua;
+                //         case "金": //替换 图标资源
 
-                            return qua = 6 + qua;
-                        case "白": //替换 图标资源
+                //             return qua = 6 + qua;
+                //         case "白": //替换 图标资源
 
-                            return qua = 7 + qua;
-                        case "蓝_skill": //替换 图标资源
+                //             return qua = 7 + qua;
+                //         case "蓝_skill": //替换 图标资源
 
-                            return qua = 2 + qua;
-                        case "紫_skill": //替换 图标资源
+                //             return qua = 2 + qua;
+                //         case "紫_skill": //替换 图标资源
 
-                            return qua = 3 + qua;
-                        case "橙_skill": //替换 图标资源
+                //             return qua = 3 + qua;
+                //         case "橙_skill": //替换 图标资源
 
-                            return qua = 4 + qua;
-                        default: {
-                            return qua = "无";
-                        };
-                    }
-                }
+                //             return qua = 4 + qua;
+                //         default: {
+                //             return qua = "无";
+                //         };
+                //     }
+                // }
                 //quality(qua);
                 var imgFullName = pat + img + ".png"
                 var imgBoolean = new File(imgFullName);
@@ -103,7 +103,7 @@ var main = function () {
                         //smartObjectOptions().putPath(charIDToTypeID("null"), imgFullName);
 
                         //修改psd文件
-                        modifyPSDcontent(tag, tagR, lv, imgFullName, quality(qua));
+                        modifyPSDcontent(tag, tagR, lv, imgFullName,qua);
                         //保存图片
                         saveImg(pat, type, imgName);
                         $.writeln("保存: " + line.name);
@@ -132,13 +132,12 @@ function modifyPSDcontent(tag, tagR, lv, imgFullName, qua) {
     //2.替换 星级 if(lv !=0){执行替换}
 
     var layers = doc.layers;
-    var pat = "//版本公用计算机/美术资源共享文件夹1/天天幻灵美术/天天怼三国最终/lib/原始文件/";//后续需要改成配置的
+    var pat = "D:/sg2/psd/S神兵/";//后续需要改成配置的
 
-    //var tagFullName = pat + "阵营/小_" + tag + ".psd";
-    var tagFullName = pat + "神兵角标_" + tag + ".psd";
+    var tagFullName = pat + "品质/神兵-" + tag + ".psd";
     var tagR_FullName = pat + "图标相关/" + tagR + ".psd";
     var lvFullName = pat + "星星/" + lv + ".psd";
-    var quaFullName = pat + "道具品质底/" + qua + ".psd";
+    var quaFullName = pat + "品质/bg_" + qua + ".psd";
 
     for (var i = 0; i < layers.length; i++) {//遍历图层
 
