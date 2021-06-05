@@ -24,8 +24,8 @@ var doc = app.activeDocument;
 //var excelFile = new File("E:/test/test.xlsx");
 
 //var excelFile = new File("E:/test/武将.json");
-var pat = "D:/sg2/ui/upload_new/T图标/";//后续需要改成配置的
-var excelFile = new File(pat + "配置表/神器卡.json");//后续需要改成配置的
+var pat = "D:/balck8/sg2/svn/ui/upload/T图标/";//后续需要改成配置的
+var excelFile = new File(pat + "配置表/神器small.json");//后续需要改成配置的
 //var pat = "E:/test/T图标/";
 
 
@@ -132,12 +132,12 @@ function modifyPSDcontent(tag, tagR, lv, imgFullName, qua) {
     //2.替换 星级 if(lv !=0){执行替换}
 
     var layers = doc.layers;
-    var pat = "D:/sg2/psd/S神兵/";//后续需要改成配置的
+    var pat = "D:/balck8/sg2/psd/S神兵/";//后续需要改成配置的
 
     var tagFullName = pat + "品质/神兵-" + tag + ".psd";
     var tagR_FullName = pat + "图标相关/" + tagR + ".psd";
     var lvFullName = pat + "星星/" + lv + ".psd";
-    var quaFullName = pat + "品质/bg_" + qua + ".psd";
+    var quaFullName = pat + "品质/" + qua + ".psd";
 
     for (var i = 0; i < layers.length; i++) {//遍历图层
 

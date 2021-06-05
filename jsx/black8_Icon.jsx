@@ -24,8 +24,8 @@ var doc = app.activeDocument;
 //var excelFile = new File("E:/test/test.xlsx");
 
 //var excelFile = new File("E:/test/武将.json");
-var pat = "D:/sg2/ui/upload_new/T图标/";//后续需要改成配置的
-var excelFile = new File(pat + "配置表/道具_无品质框.json");//后续需要改成配置的
+var pat = "D:/balck8/sg2/svn/ui/upload/T图标/";//后续需要改成配置的
+var excelFile = new File(pat + "配置表/头像框_无品质框.json");//后续需要改成配置的
 //var pat = "E:/test/T图标/";
 
 
@@ -78,6 +78,15 @@ var main = function () {
                         case "白": //替换 图标资源
 
                             return qua = 7 + qua;
+                        case "红_头像框": //替换 图标资源
+
+                            return qua = 5 + qua;
+                        case "紫_头像框": //替换 图标资源
+
+                            return qua = 3 + qua;
+                        case "橙_头像框": //替换 图标资源
+
+                            return qua = 4 + qua;
                         case "蓝_skill": //替换 图标资源
 
                             return qua = 2 + qua;
@@ -201,7 +210,7 @@ function modifyPSDcontent(tag, tagR, lv, imgFullName, qua) {
                     activeDocument.activeLayer = layer;
                     kersBoru.listenerType.placedLayerReplaceContents(quaFullName);
                     break;
-                }else {
+                } else {
                     layer.visible = false;
                 }
             default: { }

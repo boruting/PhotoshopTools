@@ -15,10 +15,34 @@ var kersBoru = function () {
 
 kersBoru.listenerType = {}; //监听脚本类型
 kersBoru.layer = {}; //图层相关
+kersBoru.doc = {}//psd文档相关
+/**
+ * 
+ * @param {*} type 保存的类型 如:png
+ * @param {*} path 保存文件的位置
+ * @param {*} imgName 保存文件的名字
+ */
+kersBoru.doc.saveDoc = function (type, path, imgName) {
+    if (type === "png") {
+        var saveOption = new ExportOptionsSaveForWeb();
+        saveOption.format = SaveDocumentType.PNG;
+        saveOption.PNG8 = false;
+        var folder = new Folder(path);
+        if (!folder.exists) {
+            // alert("这里是folder.exists ");					//创建文件夹
+            folder.create();
+        }
+        var outfile = new File(decodeURI(path + "/") + imgName + "." + type); //保存图片到
+
+        app.activeDocument.exportDocument(outfile, ExportType.SAVEFORWEB, saveOption);
+
+    }
+
+}
 /**
 * 还原历史记录到打开时
 */
-kersBoru.listenerType.returnRecords = function() {
+kersBoru.listenerType.returnRecords = function () {
     var idslct = charIDToTypeID("slct");
     var desc326 = new ActionDescriptor();
     var idnull = charIDToTypeID("null");
