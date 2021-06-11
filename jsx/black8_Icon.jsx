@@ -25,7 +25,7 @@ var doc = app.activeDocument;
 
 //var excelFile = new File("E:/test/武将.json");
 var pat = "D:/balck8/sg2/svn/ui/upload/T图标/";//后续需要改成配置的
-var excelFile = new File(pat + "配置表/头像框_无品质框.json");//后续需要改成配置的
+var excelFile = new File(pat + "配置表/宝物.json");//后续需要改成配置的
 //var pat = "E:/test/T图标/";
 
 
@@ -143,8 +143,8 @@ function modifyPSDcontent(tag, tagR, lv, imgFullName, qua) {
     var layers = doc.layers;
     var pat = "//版本公用计算机/美术资源共享文件夹1/天天幻灵美术/天天怼三国最终/lib/原始文件/";//后续需要改成配置的
 
-    //var tagFullName = pat + "阵营/小_" + tag + ".psd";
-    var tagFullName = pat + "神兵角标_" + tag + ".psd";
+    var tagFullName = pat + "阵营/小_" + tag + ".psd";
+    //var tagFullName = pat + "神兵角标_" + tag + ".psd";
     var tagR_FullName = pat + "图标相关/" + tagR + ".psd";
     var lvFullName = pat + "星星/" + lv + ".psd";
     var quaFullName = pat + "道具品质底/" + qua + ".psd";
