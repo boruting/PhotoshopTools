@@ -9,7 +9,7 @@
             "type": "extendscript-debug",
             "request": "launch",
             "name": "Photoshop-JSX",
-            "program": "${workspaceFolder}/jsx/black8_Icon.jsx",//根目录
+            "program": "${workspaceFolder}/jsx/black8_YL_ka.jsx",//根目录
             //"program": "${workspaceFolder}/jsx/PsdToEUI/PsdToEUI.jsx",//EUI
             //"program": "${workspaceFolder}/jsx/cleanMetaData/main_one.jsx",//清理原始数据
              "stopOnEntry": false
