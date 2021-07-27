@@ -24,8 +24,8 @@ var doc = app.activeDocument;
 //var excelFile = new File("E:/test/test.xlsx");
 
 //var excelFile = new File("E:/test/武将.json");
-var pat = "D:/Workspace/black8/百将诀/T图标/"; //后续需要改成配置的
-var excelFile = new File("D:/Workspace/black8/百将诀/T图标/test.json"); //后续需要改成配置的
+var pat = "D:/Black8/bjj/svn/ui/upload/T图标/"; //后续需要改成配置的
+var excelFile = new File(pat + "配置表/武将卡_灰.json"); //后续需要改成配置的
 //var pat = "E:/test/T图标/";
 
 
@@ -99,13 +99,13 @@ function modifyPSDcontent(tag, tagR, lv, imgFullName, qua, name,zhiye) {
 
     var layers = doc.layers;
     //var pat = "//版本公用计算机/美术资源共享文件夹1/天天幻灵美术/天天怼三国最终/lib/原始文件/"; //后续需要改成配置的
-    var pat = "D:/Workspace/black8/百将诀/lib/原始文件/"; //后续需要改成配置的
+    var pat = "//版本公用计算机/美术资源共享文件夹1/天天幻灵美术/百将诀/lib/原始文件/"; //后续需要改成配置的
     var tagFullName = pat + "阵营/" + tag + ".psd";
-    //var tagFullName = pat + "神兵角标_" + tag + ".psd";
+    
     var tagR_FullName = pat + "图标相关/" + tagR + ".psd";
-    var lvFullName = pat + "星星/" + lv + ".psd";
+    var lvFullName = pat + "星星/卡牌类型/" + lv + ".psd";//卡片类型
     var quaFullName = pat + "道具品质/" + qua + ".psd";
-    var zhiyeIcon = pat + "阵营/" + zhiye + ".psd"
+    var zhiyeIcon = pat + "阵营/" + zhiye + ".psd";//职业
 
 
     for (var i = 0; i < layers.length; i++) { //遍历图层
@@ -186,7 +186,7 @@ function modifyPSDcontent(tag, tagR, lv, imgFullName, qua, name,zhiye) {
                     kersBoru.listenerType.canvasConstituency("Al  ");
                     kersBoru.listenerType.alignDistribute("AdCH");
                     kersBoru.listenerType.canvasConstituency("None");
-                    $.writeln("未成功数量:");
+                    //$.writeln("未成功数量:");
 
 
                 }
@@ -217,7 +217,7 @@ function qualityColor(qua) {
         case "英灵卡品质_红":
             return "ea0101";
         case "英灵卡品质_白":
-            return "ffffff";
+            return "efe3ff";
         default:
             {
                 return "000000";
@@ -254,5 +254,7 @@ function saveImg(pat, type, imgName) {
     doc.exportDocument(outfile, ExportType.SAVEFORWEB, saveOption);
     //alert("这里是000000000000000   "); 
 }
+function test(){
 
+}
 main();

@@ -40,6 +40,34 @@ kersBoru.doc.saveDoc = function (type, path, imgName) {
 
 }
 /**
+ * 旋转角度 变形工具 锚点坐标的
+ * @param {*} x //坐标x
+ * @param {*} y //坐标y
+ * @param {*} angle //角度
+ */
+ kersBoru.listenerType.rotationAngle = function (x,y,angle) {
+
+    var idTrnf = charIDToTypeID("Trnf");//变形工具(transform)
+    var desc = new ActionDescriptor();//动作描述符
+    var descPstn = new ActionDescriptor();//位置动作描述符
+    var idFTcs = charIDToTypeID("FTcs");
+    var idQCSt = charIDToTypeID("QCSt");
+    var idQcsi = charIDToTypeID("Qcsi");
+    desc.putEnumerated(idFTcs, idQCSt, idQcsi);
+    
+    var idPstn = charIDToTypeID("Pstn");//位置(position)
+    descPstn.putUnitDouble(charIDToTypeID("Hrzn"), charIDToTypeID("#Pxl"), x);//水平坐标
+    descPstn.putUnitDouble(charIDToTypeID("Vrtc"), charIDToTypeID("#Pxl"), y);//垂直坐标
+    var idPnt = charIDToTypeID("Pnt ");//锚点
+    desc.putObject(idPstn, idPnt, descPstn);
+
+    var idAngl = charIDToTypeID("Angl");
+    var idAng = charIDToTypeID("#Ang");
+    desc.putUnitDouble(idAngl, idAng, angle);
+
+    executeAction(idTrnf, desc, DialogModes.NO);
+}
+/**
 * 还原历史记录到打开时
 */
 kersBoru.listenerType.returnRecords = function () {

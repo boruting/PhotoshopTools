@@ -24,8 +24,9 @@ var doc = app.activeDocument;
 //var excelFile = new File("E:/test/test.xlsx");
 
 //var excelFile = new File("E:/test/武将.json");
-var pat = "D:/balck8/sg2/svn/ui/upload/T图标/";//后续需要改成配置的
-var excelFile = new File(pat + "配置表/宝物.json");//后续需要改成配置的
+//var pat = "D:/Black8/sg2/svn/ui/upload/T图标/";//后续需要改成配置的
+var pat = "D:/Black8/bjj/svn/ui/upload/T图标/";//百将诀
+var excelFile = new File(pat + "配置表/武将消耗.json");//后续需要改成配置的
 //var pat = "E:/test/T图标/";
 
 
@@ -55,52 +56,7 @@ var main = function () {
                 var qua = line.qua;//品质框
                 var imgName = line.imgName;//图片名字
                 var isExport = line.isExport;//是否需要导出
-                var quality = function (qua) {//修改品质名
-                    switch (qua) {
-                        case "绿": //替换 图标资源
-
-                            return qua = 1 + qua;
-                        case "蓝": //替换 图标资源
-
-                            return qua = 2 + qua;
-                        case "紫": //替换 图标资源
-
-                            return qua = 3 + qua;
-                        case "橙": //替换 图标资源
-
-                            return qua = 4 + qua;
-                        case "红": //替换 图标资源
-
-                            return qua = 5 + qua;
-                        case "金": //替换 图标资源
-
-                            return qua = 6 + qua;
-                        case "白": //替换 图标资源
-
-                            return qua = 7 + qua;
-                        case "红_头像框": //替换 图标资源
-
-                            return qua = 5 + qua;
-                        case "紫_头像框": //替换 图标资源
-
-                            return qua = 3 + qua;
-                        case "橙_头像框": //替换 图标资源
-
-                            return qua = 4 + qua;
-                        case "蓝_skill": //替换 图标资源
-
-                            return qua = 2 + qua;
-                        case "紫_skill": //替换 图标资源
-
-                            return qua = 3 + qua;
-                        case "橙_skill": //替换 图标资源
-
-                            return qua = 4 + qua;
-                        default: {
-                            return qua = "无";
-                        };
-                    }
-                }
+                
                 //quality(qua);
                 var imgFullName = pat + img + ".png"
                 var imgBoolean = new File(imgFullName);
@@ -112,7 +68,7 @@ var main = function () {
                         //smartObjectOptions().putPath(charIDToTypeID("null"), imgFullName);
 
                         //修改psd文件
-                        modifyPSDcontent(tag, tagR, lv, imgFullName, quality(qua));
+                        modifyPSDcontent(tag, tagR, lv, imgFullName, qua);
                         //保存图片
                         saveImg(pat, type, imgName);
                         $.writeln("保存: " + line.name);
@@ -136,18 +92,17 @@ var main = function () {
  */
 function modifyPSDcontent(tag, tagR, lv, imgFullName, qua) {
 
-    //修改链接图层的地址
-    //1.替换 图标资源 if(如果没找到对应资源直接条到下一个循环 continue )
-    //2.替换 星级 if(lv !=0){执行替换}
+    
 
     var layers = doc.layers;
-    var pat = "//版本公用计算机/美术资源共享文件夹1/天天幻灵美术/天天怼三国最终/lib/原始文件/";//后续需要改成配置的
+    //var pat = "//版本公用计算机/美术资源共享文件夹1/天天幻灵美术/天天怼三国最终/lib/原始文件/";//后续需要改成配置的
+    var pat = "//版本公用计算机/美术资源共享文件夹1/天天幻灵美术/百将诀/lib/原始文件/";//百将诀
 
     var tagFullName = pat + "阵营/小_" + tag + ".psd";
     //var tagFullName = pat + "神兵角标_" + tag + ".psd";
     var tagR_FullName = pat + "图标相关/" + tagR + ".psd";
     var lvFullName = pat + "星星/" + lv + ".psd";
-    var quaFullName = pat + "道具品质底/" + qua + ".psd";
+    var quaFullName = pat + "道具品质/" + qua + ".psd";
 
     for (var i = 0; i < layers.length; i++) {//遍历图层
 
