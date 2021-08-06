@@ -20,9 +20,11 @@
  * @date 2020-08-19  异常BUG 有些智能对象会不打开清理-------------------------- 
  * @date 2020-11-09  添加对链接对象的处理 判断是链接对象还是智能对象 链接对象链接文件是否存在(getPath(stringIDToTypeID("link"))
  * @date 2020-11-12  取消了对连接对象的清理编辑操作(忽略 连接对象图层)
+ * @date 2021-08-06  丢失链接对象的文件跳过
+ *                   文档最下的图层隐藏状态被修改为显示(是选中这个图层导致的)
  *
  */
-main = function() {
+main = function () {
 
     whatApp = String(app.name); //String version of the app name
 
@@ -51,7 +53,7 @@ main = function() {
  * 清理文档的原始数据 包含智能对象内
  * 
  */
-var cleanDocumentMetadata = function() {
+var cleanDocumentMetadata = function () {
 
     var aDoc = app.activeDocument;
     var layers = aDoc.layers;
@@ -60,7 +62,16 @@ var cleanDocumentMetadata = function() {
     var posLockedArr = []; //图层移动锁定属性数组
     var allLockedArr = []; //图层全锁定属性数组
     var smartArr = []; //重复智能对象
-    aDoc.activeLayer = layers[layers.length - 1]; //选中图层最下方的图层 目的是防止当前文档所有图层都被选中
+
+    var layer_ = layers[layers.length - 1];
+    
+    var obj_ = new layerInfo(layer_);
+    aDoc.activeLayer = layer_ ;
+    //还原选中图层信息 (选中图层会吧隐藏状态修改为显示状态)
+    layer_.visible = obj_.visible;
+    layer_.allLocked =  obj_.allLocked;
+    layer_.positionLocked = obj_.positionLocked;
+
     cleanMetadata();
     //记录图层信息
     layersInfo.record(app.activeDocument.layers, visibleArr, allLockedArr, posLockedArr);
@@ -100,7 +111,7 @@ var cleanDocumentMetadata = function() {
  * 遍历图层组下的图层
  * @param {*} layer 图层组
  */
-var layerSetFor = function(layer, smartArr) {
+var layerSetFor = function (layer, smartArr) {
     //var layers = layer.layers;
     $.writeln("当前位置 (" + layer.name + ") 组中做遍历图层");
     var layers = layer.layers;
@@ -124,7 +135,7 @@ var layerSetFor = function(layer, smartArr) {
  * 
  * @param {*} document 文档  这里应该是当前激活文档 app.activeDocument
  */
-var saveClose = function(document) {
+var saveClose = function (document) {
     if (document.name.substr(-4) == ".jpg" || document.name.substr(-5) == ".JPEG") { //jpg 智能对象 保存会有弹窗            条件位置保存当前文档前
         $.writeln("======保存jpeg类型文件=====");
         jpegSave(document); //jpg 格式保存关闭
@@ -143,7 +154,7 @@ var saveClose = function(document) {
  * PSD  处理
  * @param {*} document 
  */
-var psdSave = function(document) {
+var psdSave = function (document) {
     var sddd = decodeURI(document.path).substring(2, decodeURI(document.path).length); //
     $.writeln(sddd);
     //var fileOut = new File("E:/000" + sddd + "/");
@@ -166,7 +177,7 @@ var psdSave = function(document) {
  * JPEG 处理
  *  @param {*} document 文档
  */
-var jpegSave = function(document) {
+var jpegSave = function (document) {
     var saveIn = document.path; //当前激活文档路径
     var extensionType = Extension.LOWERCASE; //后缀小写
     var asCopy = false; //是否已副本的方式
@@ -183,7 +194,7 @@ var jpegSave = function(document) {
 /**
  * 返回一个智能对象的引用类型
  */
-var smartObjectOptions = function() {
+var smartObjectOptions = function () {
     var r = new ActionReference();
     var d = new ActionDescriptor();
 
@@ -203,12 +214,12 @@ var smartObjectOptions = function() {
  * 
  * @param {*} layer 图层 
  */
-var editSmartObject = function(layer, smartArr) {
+var editSmartObject = function (layer, smartArr) {
 
     activeDocument.activeLayer = layer; //选中当前激活文档的当前图层
-
-    var smartName = smartObjectOptions().getString(stringIDToTypeID("fileReference")); //返回智能对象文件名字
-
+    var options = smartObjectOptions();
+    var smartName = options.getString(stringIDToTypeID("fileReference")); //返回智能对象文件名字
+    //var pp= options.getPath(stringIDToTypeID("link"));//获取链接路径
     if (layer.name.substr(-2) == "忽略") {
         $.writeln("不需要处理的");
         return;
@@ -217,38 +228,50 @@ var editSmartObject = function(layer, smartArr) {
             $.writeln("这条图层是个AI智能对象 " + smartName);
             return;
         }
-        if (smartArr.length > 0) { //处理重复智能对象
-            for (var i = 0; i < smartArr.length; i++) {
-                if (smartName === smartArr[i]) {
-                    $.writeln("重复智能对象");
-                    return;
-                }
-            }
-            smartArr.push(smartName); //smartName 添加到数组中
-            $.writeln("智能对象数组: " + smartArr);
-        } else {
-            smartArr.push(smartName); //smartName 添加到数组中
-            $.writeln("智能对象数组: " + smartArr);
-        }
+        // if (smartArr.length > 0) { //处理重复智能对象
+        //     for (var i = 0; i < smartArr.length; i++) {
+        //         if (smartName === smartArr[i]) {
+        //             $.writeln("重复智能对象");
+        //             return;
+        //         }
+        //     }
+        //     // smartArr.push(smartName); //smartName 添加到数组中
+        //     // $.writeln("智能对象数组: " + smartArr);
+        // } else {
+        //     smartArr.push(smartName); //smartName 添加到数组中
+        //     $.writeln("智能对象数组: " + smartArr);
+        // }
     }
-
     try { //判断是否为链接对象
-        var smartPath = smartObjectOptions().getPath(stringIDToTypeID("link")); //获取链接路径(getPath)
-        
+        var smartPath = options.getPath(stringIDToTypeID("link")); //获取链接路径(getPath)
+
     } catch (e) {
         var smartPath = null;
     }
     if (smartPath == null) {
-        executeAction(stringIDToTypeID("placedLayerEditContents"), undefined, DialogModes.NO);
-    } else {
-        // var smartPathBoolean = new File(smartPath);
-        // if (smartPathBoolean.exists) {
-        //     executeAction(stringIDToTypeID("placedLayerEditContents"), undefined, DialogModes.NO); //编辑智能对象
-        // } else {
-        //     $.writeln("缺少链接对象");
+        try {
+            executeAction(stringIDToTypeID("placedLayerEditContents"), undefined, DialogModes.NO);
+            if (smartArr.length > 0) {
+                for (var i = 0; i < smartArr.length; i++) {
+                    if (app.activeDocument.name == smartArr[i]) {
 
-        //     return;
-        // }
+                        $.writeln("重复的智能对象--已清理过 文档名: " + app.activeDocument.name);
+                        saveClose(app.activeDocument);
+                        return;
+                    }
+                }
+
+
+            }
+            smartArr.push(app.activeDocument.name);
+        } catch (e) {
+            $.writeln("丢失链接的链接对象");
+            return;
+        }
+        $.writeln(smartArr);
+
+    } else {
+
         return;
 
     }
@@ -270,7 +293,7 @@ var editSmartObject = function(layer, smartArr) {
 /**
  * 清理数据
  */
-var cleanMetadata = function() {
+var cleanMetadata = function () {
 
     if (ExternalObject.AdobeXMPScript == undefined) ExternalObject.AdobeXMPScript = new ExternalObject("lib:AdobeXMPScript");
 
@@ -287,7 +310,7 @@ var cleanMetadata = function() {
  * 判断文档是否存在背景层
  * 存在返回 true 不存在返回 false
  */
-var BKOffset = function() {
+var BKOffset = function () {
     //var backgroundIndexOffset = 0;
     var bg = false;
     try {
@@ -296,7 +319,7 @@ var BKOffset = function() {
             return bg;
         }
 
-    } catch (err) {}
+    } catch (err) { }
     return bg;
 }
 /**
@@ -311,7 +334,7 @@ var layersInfo = {}
  * 2.图层是否锁定了移动属性
  * 3.图层是否全锁定了
  */
-layersInfo.record = function(layers, visibleArr, allLockedArr, posLockedArr) {
+layersInfo.record = function (layers, visibleArr, allLockedArr, posLockedArr) {
 
     for (var i = 0; i < layers.length; i++) {
 
@@ -376,7 +399,7 @@ layersInfo.record = function(layers, visibleArr, allLockedArr, posLockedArr) {
  * 3.还原图层 隐藏
  * 还原顺序需要 先还原 移动锁定 在还原 全锁定 最后还原 隐藏 
  */
-layersInfo.restore = function(layers, posLockedArr, allLockedArr, visibleArr) {
+layersInfo.restore = function (layers, posLockedArr, allLockedArr, visibleArr) {
     for (var i = 0; i < layers.length; i++) {
         var layer = layers[i];
         if (layer.layers) {
@@ -399,7 +422,7 @@ layersInfo.restore = function(layers, posLockedArr, allLockedArr, visibleArr) {
  * 通过过类型还原当前图层
  * 
  */
-layersInfo.restoreLayer = function(layer, arr, type) {
+layersInfo.restoreLayer = function (layer, arr, type) {
     for (var i = 0; i < arr.length; i++) {
         if (layer.id == arr[i]) {
             type(layer);
@@ -410,21 +433,29 @@ layersInfo.restoreLayer = function(layer, arr, type) {
 /**
  * 返回 当前图层修改为隐藏状态 
  */
-layersInfo.layerVisible = function(layer) {
+layersInfo.layerVisible = function (layer) {
     //$.writeln("aaaaaaa");
     return layer.visible = false;
 }
 /**
  * 返回 当前图层修改为移动锁定状态
  */
-layersInfo.layerPositionLocked = function(layer) {
+layersInfo.layerPositionLocked = function (layer) {
     return layer.positionLocked = true;
 }
 /**
  * 返回 当前图层修改为全部锁定状态
  */
-layersInfo.layerAllLocked = function(layer) {
+layersInfo.layerAllLocked = function (layer) {
     return layer.allLocked = true;
 }
-
+/**
+ * 记录图层信息
+ * @param {*} layer 
+ */
+function layerInfo(layer) {
+    this.visible = layer.visible;
+    this.allLocked = layer.allLocked;
+    this.positionLocked = layer.positionLocked;
+}
 //main();
