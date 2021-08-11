@@ -22,6 +22,7 @@
  * @date 2020-11-12  取消了对连接对象的清理编辑操作(忽略 连接对象图层)
  * @date 2021-08-06  丢失链接对象的文件跳过
  *                   文档最下的图层隐藏状态被修改为显示(是选中这个图层导致的)
+ * @date 2021-08-11  修复只有背景层的文档 无法隐藏 导致中断
  *
  */
 main = function () {
@@ -64,13 +65,17 @@ var cleanDocumentMetadata = function () {
     var smartArr = []; //重复智能对象
 
     var layer_ = layers[layers.length - 1];
-    
+
     var obj_ = new layerInfo(layer_);
-    aDoc.activeLayer = layer_ ;
+    aDoc.activeLayer = layer_;
     //还原选中图层信息 (选中图层会吧隐藏状态修改为显示状态)
-    layer_.visible = obj_.visible;
-    layer_.allLocked =  obj_.allLocked;
-    layer_.positionLocked = obj_.positionLocked;
+    if (layer_.isBackgroundLayer != true) {
+        //$.writeln(" ff");
+        layer_.visible = obj_.visible;
+        layer_.allLocked = obj_.allLocked;
+        layer_.positionLocked = obj_.positionLocked;
+    }
+
 
     cleanMetadata();
     //记录图层信息
