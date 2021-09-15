@@ -24,8 +24,9 @@ var doc = app.activeDocument;
 //var excelFile = new File("E:/test/test.xlsx");
 
 //var excelFile = new File("E:/test/武将.json");
-var pat = "D:/Black8/sg2/svn/ui/upload/T图标/";//后续需要改成配置的
-var excelFile = new File(pat + "配置表/战宠.json");//后续需要改成配置的
+var pat = "D:/Black8/72bian/svn/ui/upload/T图标/";//后续需要改成配置的
+//var pat = "D:/Black8/bjj/svn/ui/upload/T图标/";//百将诀
+var excelFile = new File(pat + "配置表/神兵_small.json");//后续需要改成配置的
 //var pat = "E:/test/T图标/";
 
 
@@ -133,8 +134,8 @@ function modifyPSDcontent(tag, tagR, lv, imgFullName, qua, name) {
     //2.替换 星级 if(lv !=0){执行替换}
 
     var layers = doc.layers;
-    var pat = "//版本公用计算机/美术资源共享文件夹1/天天幻灵美术/天天怼三国最终/lib/原始文件/";//后续需要改成配置的
-
+    var pat = "//版本公用计算机/美术资源共享文件夹1/天天幻灵美术/72变/lib/原始文件/";//后续需要改成配置的
+    //var pat = "//版本公用计算机/美术资源共享文件夹1/天天幻灵美术/百将诀/lib/原始文件/";//百将诀
     var tagFullName = pat + "道具品质/" + tag + ".psd";
     var tagR_FullName = pat + "图标相关/" + tagR + ".psd";
     var lvFullName = pat + "星星/" + lv + ".psd";
@@ -205,9 +206,12 @@ function modifyPSDcontent(tag, tagR, lv, imgFullName, qua, name) {
                     layer.visible = false;
                 }
             case "名称":
-                var item = layer.textItem;
-                item.contents = name;
-                item.color.rgb["hexValue"] = qualityColor(qua);
+                if (layer.kind == LayerKind.TEXT) {
+                    var item = layer.textItem;
+                    item.contents = name;
+                    item.color.rgb["hexValue"] = qualityColor(qua);
+                }
+
             default: { }
 
 
