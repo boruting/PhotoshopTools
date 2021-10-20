@@ -8,6 +8,8 @@
  * @date 2021-05-07 添加替换链接对象 函数
  * @date 2021-05-08 添加 画布大小选区函数 和 分布对齐方式函数
  * @date 2021-05-11 添加 还原历史记录到打开时
+ * @date 2021-10-20 添加 表格数据 函数
+ *                  修改 getLayerBounds 添加了中心点(center)
  */
 var kersBoru = function () {
     return this;
@@ -15,7 +17,8 @@ var kersBoru = function () {
 
 kersBoru.listenerType = {}; //监听脚本类型
 kersBoru.layer = {}; //图层相关
-kersBoru.doc = {}//psd文档相关
+kersBoru.doc = {};//psd文档相关
+kersBoru.excel = {};//表格
 /**
  * 
  * @param {*} type 保存的类型 如:png
@@ -45,7 +48,7 @@ kersBoru.doc.saveDoc = function (type, path, imgName) {
  * @param {*} y //坐标y
  * @param {*} angle //角度
  */
- kersBoru.listenerType.rotationAngle = function (x,y,angle) {
+kersBoru.listenerType.rotationAngle = function (x, y, angle) {
 
     var idTrnf = charIDToTypeID("Trnf");//变形工具(transform)
     var desc = new ActionDescriptor();//动作描述符
@@ -54,7 +57,7 @@ kersBoru.doc.saveDoc = function (type, path, imgName) {
     var idQCSt = charIDToTypeID("QCSt");
     var idQcsi = charIDToTypeID("Qcsi");
     desc.putEnumerated(idFTcs, idQCSt, idQcsi);
-    
+
     var idPstn = charIDToTypeID("Pstn");//位置(position)
     descPstn.putUnitDouble(charIDToTypeID("Hrzn"), charIDToTypeID("#Pxl"), x);//水平坐标
     descPstn.putUnitDouble(charIDToTypeID("Vrtc"), charIDToTypeID("#Pxl"), y);//垂直坐标
@@ -236,7 +239,11 @@ kersBoru.layer.getLayerBounds = function (layer, getType) {
         w: null,
         h: null,
         right: null,
-        bottom: null
+        bottom: null,
+        center: {
+            x: null,
+            y: null
+        }
     }
     var classStr = _value(getType, "boundsNoEffects"); //"bounds"、"boundsNoEffects"
     var bounds = layer[classStr];
@@ -249,6 +256,9 @@ kersBoru.layer.getLayerBounds = function (layer, getType) {
     boundsInfo.w = boundsInfo.right - boundsInfo.x;
     boundsInfo.h = boundsInfo.bottom - boundsInfo.y;
 
+    boundsInfo.center.x = boundsInfo.x + (boundsInfo.w / 2);
+    boundsInfo.center.y = boundsInfo.y + (boundsInfo.h / 2);
+    
     return boundsInfo;
 
 }
@@ -289,4 +299,44 @@ var isArtBoard = function (id) {
     };
     return ob;
     $.writeln(ob.artboardEnabled.value);
+}
+
+
+/**
+ * 表格--表格数据
+ * @param {*} data 
+ * @param {*} opts 
+ * @returns 
+ */
+kersBoru.excel.sheet_from_array_of_arrays = function (data, opts) {
+    var ws = {};
+    var range = { s: { c: 10000000, r: 10000000 }, e: { c: 0, r: 0 } };
+    for (var R = 0; R != data.length; ++R) {
+        for (var C = 0; C != data[R].length; ++C) {
+            if (range.s.r > R) range.s.r = R;
+            if (range.s.c > C) range.s.c = C;
+            if (range.e.r < R) range.e.r = R;
+            if (range.e.c < C) range.e.c = C;
+            var cell = { v: data[R][C] };
+            if (cell.v == null) continue;
+            var cell_ref = XLSX.utils.encode_cell({ c: C, r: R });
+
+            if (typeof cell.v === 'number') cell.t = 'n';
+            else if (typeof cell.v === 'boolean') cell.t = 'b';
+            else if (cell.v instanceof Date) {
+                cell.t = 'n'; cell.z = XLSX.SSF._table[14];
+                cell.v = datenum(cell.v);
+            }
+            else cell.t = 's';
+
+            ws[cell_ref] = cell;
+        }
+    }
+    if (range.s.c < 10000000) ws['!ref'] = XLSX.utils.encode_range(range);
+    return ws;
+}
+function datenum(v, date1904) {
+    if (date1904) v += 1462;
+    var epoch = Date.parse(v);
+    return (epoch - new Date(Date.UTC(1899, 11, 30))) / (24 * 60 * 60 * 1000);
 }
