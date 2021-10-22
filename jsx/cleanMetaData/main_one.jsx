@@ -1,7 +1,7 @@
-﻿$.evalFile(File($.fileName).path + "/cleanMetadata.jsx");
+﻿$.evalFile(File($.fileName).path + "/cleanMetadata_v2.jsx");
 $.global.main = main;
 var a = app.activeDocument;
-$.writeln("111111");
+//$.writeln("111111");
 if(main() !== false){
     
     app.activeDocument.save();

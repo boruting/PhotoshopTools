@@ -43,6 +43,71 @@ kersBoru.doc.saveDoc = function (type, path, imgName) {
 
 }
 /**
+ * 图层属性 [显示状态  完全锁定  像素锁定] 
+ * @param {*} layer 
+ */
+kersBoru.layer.layerAttribute = function (layer) {
+    this.visible = layer.visible;
+    this.allLocked = layer.allLocked;
+    this.positionLocked = layer.positionLocked;
+}
+/**
+ * 选中图层
+ * @param {*} layer 
+ */
+kersBoru.layer.selectLayer = function(layer){
+    var layInfo = new kersBoru.layer.layerAttribute(layer); 
+    activeDocument.activeLayer = layer;
+    layer.visible = layInfo.visible;
+}
+/**
+ * 返回一个 智能对象 的引用类型
+ */
+kersBoru.listenerType.smartObjectOptions = function () {
+    var r = new ActionReference();
+    var d = new ActionDescriptor();
+
+    r.putEnumerated(stringIDToTypeID("layer"), stringIDToTypeID("ordinal"), stringIDToTypeID("targetEnum"));
+    d.putReference(charIDToTypeID('null'), r);
+    var options = executeAction(charIDToTypeID("getd"), d, DialogModes.NO);
+    options = options.getObjectValue(stringIDToTypeID("smartObject"));
+    //var SmartName = options.getString(stringIDToTypeID("fileReference"));
+    //var smartPath = options.getPath(stringIDToTypeID("link"));//获取链接路径(getPath)
+    //$.writeln(smartPath);
+    return options;
+
+
+}
+/**
+ * 选中图层根据图层名
+ * @param {*} layer 图层
+ */
+kersBoru.listenerType.selectLayer = function (layer) {
+    // var desc = new ActionDescriptor();
+    // var ref = new ActionReference();
+
+    // var idslct = charIDToTypeID("slct");
+    // var idnull = charIDToTypeID("null");    
+    // var idLyr = charIDToTypeID("Lyr ");
+
+    // ref.putIdentifier(idLyr, layer.id);//图层名字
+    // desc.putReference(idnull, ref);
+    // // var idMkVs = charIDToTypeID("MkVs");
+    // // desc.putBoolean(idMkVs, true);
+    // // var idLyrI = charIDToTypeID("LyrI");
+    // // var list = new ActionList();
+    // // list.putInteger(layer.id);//图层id
+    // // desc.putList(idLyrI, list);
+    // executeAction(idslct, desc, DialogModes.NO);
+
+
+    var current = new ActionReference();
+    current.putIdentifier(charIDToTypeID("Lyr "), layer.id);
+    var desc = new ActionDescriptor();
+    desc.putReference(charIDToTypeID("null"), current);
+    executeAction(charIDToTypeID("slct"), desc, DialogModes.NO);
+}
+/**
  * 旋转角度 变形工具 锚点坐标的
  * @param {*} x //坐标x
  * @param {*} y //坐标y
@@ -258,7 +323,7 @@ kersBoru.layer.getLayerBounds = function (layer, getType) {
 
     boundsInfo.center.x = boundsInfo.x + (boundsInfo.w / 2);
     boundsInfo.center.y = boundsInfo.y + (boundsInfo.h / 2);
-    
+
     return boundsInfo;
 
 }
