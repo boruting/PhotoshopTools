@@ -1,65 +1,39 @@
-$.evalFile(File($.fileName).parent + "/lib/kersBoru_lib.jsx");
+//app.displayDialogs = DialogModes.NO;
+//$.evalFile(File($.fileName).parent + "/lib/kersBoru_lib.jsx");
+// var mainScriptPath = Folder($.fileName).parent;
+// //$.evalFile(new File(mainScriptPath + '/ad-to-uxp.jsx'));
+// $.evalFile(File($.fileName).parent + "/ad-to-uxp.jsx");
+// // var ref = new ActionReference();
+// // ref.putProperty(charIDToTypeID('Prpr'), charIDToTypeID("Nm  "));
+// // ref.putIndex(charIDToTypeID('Lyr '), 1);
+// // var idplacedLayerEditContents = stringIDToTypeID("placedLayerEditContents");
+// // var desc211 = new ActionDescriptor();
+// // ref.putProperty(charIDToTypeID('Prpr'), charIDToTypeID("Nm  "));
+// // ref.putIndex(charIDToTypeID('Lyr '), 1);
+// // executeActionGetForUXP(ref);
+// var idplacedLayerEditContents = stringIDToTypeID("placedLayerEditContents");
+// var desc218 = new ActionDescriptor();
+// executeActionForUXP(idplacedLayerEditContents, desc218);
+// var layer = app.activeDocument.activeLayer;
+// ActionDescriptor.prototype.getFlatType = function( ID )
+// {
+// 	return getFlatType( this, ID );
+// }
+// ActionDescriptor.prototype.getFlatType(layer.id)
+// var ref = new ActionReference();
+// //ref.putProperty(charIDToTypeID('Prpr'), stringIDToTypeID("targetLayers"));
+// ref.putEnumerated(charIDToTypeID("Lyr "), charIDToTypeID('Ordn'), charIDToTypeID('Trgt'));
+// var a = executeActionGet(ref);
+// executeAction(idsetd, desc2082, DialogModes.NO);
 
+if (ExternalObject.AdobeXMPScript == undefined) ExternalObject.AdobeXMPScript = new ExternalObject("lib:AdobeXMPScript");
 
-var m = function () {
-    var num = 12;//数量
-    var angle = 30; //角度
-    var alpha = 100;//透明度
-    for (var i = 0; i < num-1; i++) {
+var xmp = new XMPMeta(activeDocument.xmpMetadata.rawData);
 
-        var layer = app.activeDocument.activeLayer;
-        layer.duplicate();
-        layer.fillOpacity = nn;
-        alpha -= 9;
-        kersBoru.listenerType.rotationAngle(124, 124, angle);//旋转角度
-    }
-}
-m();
+// Begone foul Document Ancestors!
 
+xmp.deleteProperty(XMPConst.NS_PHOTOSHOP, "DocumentAncestors");//TextLayers  DocumentAncestors
 
-
-/** 动作描述 全套动作
-var idTrnf = charIDToTypeID("Trnf");
-var desc2644 = new ActionDescriptor();
-var idnull = charIDToTypeID("null");
-var ref472 = new ActionReference();
-var idLyr = charIDToTypeID("Lyr ");
-var idOrdn = charIDToTypeID("Ordn");
-var idTrgt = charIDToTypeID("Trgt");
-ref472.putEnumerated(idLyr, idOrdn, idTrgt);
-desc2644.putReference(idnull, ref472);
-var idFTcs = charIDToTypeID("FTcs");
-var idQCSt = charIDToTypeID("QCSt");
-var idQcsi = charIDToTypeID("Qcsi");
-desc2644.putEnumerated(idFTcs, idQCSt, idQcsi);
-var idPstn = charIDToTypeID("Pstn");
-var desc2645 = new ActionDescriptor();
-var idHrzn = charIDToTypeID("Hrzn");
-var idPxl = charIDToTypeID("#Pxl");
-desc2645.putUnitDouble(idHrzn, idPxl, 250.000000);
-var idVrtc = charIDToTypeID("Vrtc");
-var idPxl = charIDToTypeID("#Pxl");
-desc2645.putUnitDouble(idVrtc, idPxl, 618.000000);
-var idPnt = charIDToTypeID("Pnt ");
-desc2644.putObject(idPstn, idPnt, desc2645);
-var idOfst = charIDToTypeID("Ofst");
-var desc2646 = new ActionDescriptor();
-var idHrzn = charIDToTypeID("Hrzn");
-var idPxl = charIDToTypeID("#Pxl");
-desc2646.putUnitDouble(idHrzn, idPxl, -0.000000);
-var idVrtc = charIDToTypeID("Vrtc");
-var idPxl = charIDToTypeID("#Pxl");
-desc2646.putUnitDouble(idVrtc, idPxl, 0.000000);
-var idOfst = charIDToTypeID("Ofst");
-desc2644.putObject(idOfst, idOfst, desc2646);
-var idAngl = charIDToTypeID("Angl");
-var idAng = charIDToTypeID("#Ang");
-desc2644.putUnitDouble(idAngl, idAng, 20.000000);
-var idLnkd = charIDToTypeID("Lnkd");
-desc2644.putBoolean(idLnkd, true);
-var idIntr = charIDToTypeID("Intr");
-var idIntp = charIDToTypeID("Intp");
-var idBcbc = charIDToTypeID("Bcbc");
-desc2644.putEnumerated(idIntr, idIntp, idBcbc);
-executeAction(idTrnf, desc2644, DialogModes.NO);
- */
+app.activeDocument.xmpMetadata.rawData = xmp.serialize();
+$.writeln("清理");
+//executeActionGetForUXP(ref);

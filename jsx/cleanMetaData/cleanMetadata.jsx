@@ -221,7 +221,7 @@ var smartObjectOptions = function () {
  */
 var editSmartObject = function (layer, smartArr) {
 
-    activeDocument.activeLayer = layer; //选中当前激活文档的当前图层
+    //activeDocument.activeLayer = layer; //选中当前激活文档的当前图层
     var options = smartObjectOptions();
     var smartName = options.getString(stringIDToTypeID("fileReference")); //返回智能对象文件名字
     //var pp= options.getPath(stringIDToTypeID("link"));//获取链接路径

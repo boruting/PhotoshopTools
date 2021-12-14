@@ -7,7 +7,7 @@
  * 
  * @date 2019-08-29  v0.1
  */
-$.evalFile(File($.fileName).path + "/cleanMetadata.jsx");
+$.evalFile(File($.fileName).path + "/cleanMetadata_v2.jsx");
 $.global.saveClose = saveClose;
 $.global.cleanMetadataMain = main;
 
@@ -30,7 +30,7 @@ var pro = function() {
 
 //var folderPath = "D:/test";
 var getPsdFileName = function(folderPath) {
-
+app.displayDialogs = DialogModes.NO;
     var folderPath = Folder(folderPath); //文件夹
     var folderList = folderPath.getFiles(); //获取文件列表
 
@@ -51,6 +51,7 @@ var getPsdFileName = function(folderPath) {
                 open(file); //打开psd 文件
                 var logPath = File($.fileName).parent.parent;
                 log=new File(logPath.parent+ "/log.log");
+                
                 log.open("w", "TEXT", "????");//设置文件的操作模式为写入模式。
                 log.writeln(file);
                 //执行清理psd原始数据的脚本

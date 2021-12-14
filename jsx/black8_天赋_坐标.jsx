@@ -4,14 +4,18 @@ var file = File($.fileName);
 var p = decodeURI(file.parent.parent);
 $.evalFile(p + "/js/helper.js");
 
-function checkLayers(layers, path, data) {
+function checkLayers(doc,data) {
+    var layers = doc.layers;
+    var docWidth = doc.width.value/2;
+    var docHeight = doc.height.value/2;
+
     for (var i = 0; i < layers.length; i++) {
 
         var layer = layers[i];
 
         var boundsInfo = kersBoru.layer.getLayerBounds(layer, "boundsNoEffects");
-        var x = boundsInfo.center.x;
-        var y = boundsInfo.center.y;
+        var x = Math.round((boundsInfo.center.x)-docWidth);
+        var y =  Math.round(docHeight-(boundsInfo.center.y));
         var pos = "X:" + x + " " +"Y:"+ y;
         data.info.push([layer.name,pos]);
     }
@@ -30,18 +34,18 @@ function Workbook() {
 var doc;
 try {
     doc = app.activeDocument;
-    var docFile = new File(doc.fullName.path);
+    //var docFile = new File(doc.fullName.path);
 } catch (e) {
     doc = null;
     alert("没有打开psd文档 或 文档没有保存");
 }
 if (doc) {
     //会替换的文本
-    var info = [["城池序号", "坐标信息"]];
+    var info = [["id", "坐标信息"]];
 
     var data = { info: info };
 
-    checkLayers(doc.layers, "", data);
+    checkLayers(doc,data);
 
 
     var wb = new Workbook();

@@ -8,6 +8,7 @@
  */
 
 $.evalFile(File($.fileName).parent.parent + "/lib/kersBoru_lib.jsx");
+
 /**
  * 清理数据
  */
@@ -61,6 +62,7 @@ var smartObjectEdit = function (smartArr) {
 
 }
 var main = function () {
+    
     cleanMetadata();
     var doc = app.activeDocument;
     var layers = doc.layers;
@@ -74,7 +76,7 @@ var main = function () {
  * @param {*} layers 
  */
 var getSmartObjectLayers = function (layers, smartArr) {
-
+    
     for (var i = 0; i < layers.length; i++) {
         var layer = layers[i];
         if (layer.typename == "LayerSet" && layer.layers.length > 0) { //判断 是否是 画板或图层组 如果是就向下遍历
@@ -190,9 +192,71 @@ function suffix(smartName) {
  * 记录图层信息
  * @param {*} layer 
  */
- function layerInfo(layer) {
+function layerInfo(layer) {
     this.visible = layer.visible;
     this.allLocked = layer.allLocked;
     this.positionLocked = layer.positionLocked;
+}
+
+/**
+ * JPEG 处理
+ *  @param {*} document 文档
+ */
+var jpegSave = function (document) {
+    var saveIn = document.path; //当前激活文档路径
+    var extensionType = Extension.LOWERCASE; //后缀小写
+    var asCopy = false; //是否已副本的方式
+    var jpegOptions = new JPEGSaveOptions(); //embedColorProfile,formatOptions,matte,quality,scans,typename
+    jpegOptions.quality = 12; //图片品质 0-12 
+    jpegOptions.embedColorProfile = true; //false 嵌入颜色配置文件
+    jpegOptions.matte = MatteType.NONE; //BACKGROUND,BLACK,FOREGROUND,NETSCAPE,NONE,SEMIGRAY,WHITE
+    jpegOptions.formatOptions = FormatOptions.STANDARDBASELINE; //基线（”标准”）
+
+    //document.saveAs(saveIn, jpegOptions, asCopy, extensionType);//保存当经激活文档
+    document.close(document.saveAs(saveIn, jpegOptions, asCopy, extensionType)); //保存关闭当前文档
+
+}
+/**
+ * PSD  处理
+ * @param {*} document 
+ */
+var psdSave = function (document) {
+    var sddd = decodeURI(document.path).substring(2, decodeURI(document.path).length); //
+    $.writeln(sddd);
+    //var fileOut = new File("E:/000" + sddd + "/");
+
+    var fileOut = new File(document.path + "/" + document.name);
+    $.writeln(decodeURI(fileOut));
+    var psd = PhotoshopSaveOptions; //psd格式保存
+    var asCopy = false; //用来指定以副本的方式保存。
+    var extensionType = Extension.LOWERCASE; //后缀小写
+    var folder_ = new Folder(fileOut);
+    //folder_.create();
+    if (!folder_.exists) {
+        folder_.create();
+    }
+    document.saveAs(fileOut, psd, asCopy, extensionType); //另存为一个文档
+    $.writeln("文件保存到:  " + decodeURI(fileOut));
+    document.close(SaveOptions.DONOTSAVECHANGES); //关闭原始文档(不保存)
+}
+/**
+ * 保存并且关闭文档 
+ * 
+ * @param {*} document 文档  这里应该是当前激活文档 app.activeDocument
+ */
+var saveClose = function (document) {
+    if (document.name.substr(-4) == ".jpg" || document.name.substr(-5) == ".JPEG") { //jpg 智能对象 保存会有弹窗            条件位置保存当前文档前
+        $.writeln("======保存jpeg类型文件=====");
+        jpegSave(document); //jpg 格式保存关闭
+        return;
+    }
+    if (document.name.substr(-4) == ".psd") {
+        $.writeln("======保存PSD类型文件=====");
+        psdSave(document);
+        return;
+    } else {
+        $.writeln("======保存其它类型文件=====");
+        document.close(SaveOptions.SAVECHANGES); //保存关闭当前文档
+    }
 }
 //main();

@@ -24,8 +24,8 @@ var doc = app.activeDocument;
 //var excelFile = new File("E:/test/test.xlsx");
 
 //var excelFile = new File("E:/test/武将.json");
-var pat = "D:/Black8/bjj/svn/ui/upload/T图标/"; //后续需要改成配置的
-var excelFile = new File(pat + "配置表/武将卡_灰.json"); //后续需要改成配置的
+var pat = "D:/Black8/bjj_cn/svn/ui/upload/T图标/"; //后续需要改成配置的
+var excelFile = new File(pat + "配置表/武将卡_版署.json"); //后续需要改成配置的
 //var pat = "E:/test/T图标/";
 
 
